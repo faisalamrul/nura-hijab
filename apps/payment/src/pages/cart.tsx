@@ -66,14 +66,12 @@ export default function CartPage() {
   }
 
   // Intercept browser back button — cross-origin cookies don't work in production
-  // (different domains), so we push a sentinel history entry, catch popstate,
-  // and redirect to Astro with ?_cart= so the badge updates correctly.
+  // (different domains). Push a sentinel entry on mount so pressing back fires
+  // popstate (same-origin), then redirect to Astro with ?_cart= in the URL.
   useEffect(() => {
-    if (!ready) return;
-    window.history.pushState({ nura_sentinel: true }, "");
+    window.history.pushState(null, "");
 
-    function handlePopState(e: PopStateEvent) {
-      if ((e.state as { nura_sentinel?: boolean } | null)?.nura_sentinel) return;
+    function handlePopState() {
       try {
         const raw = localStorage.getItem("nura-cart") ?? "[]";
         const encoded = btoa(
@@ -87,7 +85,7 @@ export default function CartPage() {
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function goBackToAstro() {
     try {
