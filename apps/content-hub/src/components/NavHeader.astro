@@ -264,7 +264,7 @@
     setBadge(cookieQty !== null ? (parseInt(cookieQty, 10) || 0) : countFromLocalStorage());
   }
 
-  // Sync cart back from Next.js via ?_cart= URL param ("Lanjut Belanja" button)
+  // Sync cart back from Next.js via ?_cart= URL param (back button / "Lanjut Belanja")
   const urlParams = new URLSearchParams(window.location.search);
   const cartParam = urlParams.get("_cart");
   if (cartParam) {
@@ -277,9 +277,12 @@
     urlParams.delete("_cart");
     const cleanUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "");
     window.history.replaceState(null, "", cleanUrl);
+    // Update cookie + badge from the freshly-written localStorage
+    // (onPageShow would read the stale cookie set by Astro before the user visited Next.js)
+    onLocalCartUpdate();
+  } else {
+    onPageShow(); // initial badge: cookie wins over stale Astro localStorage
   }
-
-  onPageShow(); // initial badge: cookie wins (set by Next.js) over stale Astro localStorage
   document.addEventListener("nura:cart-update", onLocalCartUpdate);
   window.addEventListener("pageshow", onPageShow);
 
