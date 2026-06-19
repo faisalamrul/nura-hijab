@@ -66,9 +66,10 @@ export default function CartPage() {
   }
 
   // Intercept browser back button — cross-origin cookies don't work in production
-  // (different domains). Push a sentinel entry on mount so pressing back fires
-  // popstate (same-origin), then redirect to Astro with ?_cart= in the URL.
+  // (different domains). Push sentinel AFTER ready so router.replace() doesn't
+  // overwrite it (router.replace uses replaceState on the current entry).
   useEffect(() => {
+    if (!ready) return;
     window.history.pushState(null, "");
 
     function handlePopState() {
@@ -85,7 +86,7 @@ export default function CartPage() {
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function goBackToAstro() {
     try {
