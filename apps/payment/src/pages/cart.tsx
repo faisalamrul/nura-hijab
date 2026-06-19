@@ -65,6 +65,30 @@ export default function CartPage() {
     });
   }
 
+  // Intercept browser back button — cross-origin cookies don't work in production
+  // (different domains), so we push a sentinel history entry, catch popstate,
+  // and redirect to Astro with ?_cart= so the badge updates correctly.
+  useEffect(() => {
+    if (!ready) return;
+    window.history.pushState({ nura_sentinel: true }, "");
+
+    function handlePopState(e: PopStateEvent) {
+      if ((e.state as { nura_sentinel?: boolean } | null)?.nura_sentinel) return;
+      try {
+        const raw = localStorage.getItem("nura-cart") ?? "[]";
+        const encoded = btoa(
+          Array.from(new TextEncoder().encode(raw), (b) => String.fromCharCode(b)).join("")
+        );
+        window.location.replace(`${ASTRO_URL}/produk/?_cart=${encoded}`);
+      } catch {
+        window.location.replace(`${ASTRO_URL}/produk/`);
+      }
+    }
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function goBackToAstro() {
     try {
       // Read directly from localStorage — always authoritative, no React state closure risk
