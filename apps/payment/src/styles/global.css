@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@source "../components/**/*.tsx";
+@source "../pages/**/*.tsx";
+
+@theme {
+  --font-heading: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --color-jet: #0a0a0a;
+  --color-charcoal: #2d2d2d;
+  --color-silver: #c8c8c8;
+  --color-surface: #f7f7f7;
+  --color-ink: #111111;
+  --color-muted: #888888;
+}
+
+*, *::before, *::after {
+  border-radius: 0 !important;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

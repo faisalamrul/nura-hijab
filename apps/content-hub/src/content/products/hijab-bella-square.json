@@ -1,0 +1,12 @@
+{
+  "name": "Hijab Bella Square",
+  "price": 135000,
+  "variants": 18,
+  "tag": "terlaris",
+  "image": "https://images.unsplash.com/photo-1661254601903-0edfe1cd736c?w=600&h=800&q=70&auto=format&fit=crop&crop=faces,center",
+  "sku": "NR-BSQ-001",
+  "material": "Bella Square",
+  "description": "Hijab segi empat bella square dengan tekstur lembut dan bobot ringan yang nyaman dipakai seharian. Tersedia dalam 18 pilihan warna earth tone dan netral untuk berbagai kesempatan — dari aktivitas harian hingga acara semi-formal.",
+  "colors": ["Cream", "Sand", "Dusty Rose", "Sage Green", "Steel Blue", "Chocolate", "Mauve", "Olive"],
+  "inStock": true
+}

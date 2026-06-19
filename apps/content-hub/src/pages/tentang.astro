@@ -1,0 +1,288 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SchemaOrg from "../components/SchemaOrg.astro";
+import NavHeader from "../components/NavHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+const pageUrl = `${siteUrl}/tentang/`;
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "NURA",
+  "url": siteUrl,
+  "logo": {
+    "@type": "ImageObject",
+    "url": `${siteUrl}/logo.png`,
+    "width": 200,
+    "height": 60,
+  },
+  "description": "NURA adalah brand hijab premium Indonesia dengan filosofi silent luxury — kualitas berbicara lebih keras dari label. Kami menghadirkan koleksi hijab premium untuk wanita Muslim modern Indonesia.",
+  "foundingDate": "2022",
+  "foundingLocation": {
+    "@type": "Place",
+    "name": "Jakarta, Indonesia",
+  },
+  "sameAs": [
+    "https://instagram.com/nura.id",
+    "https://tiktok.com/@nura.id",
+    "https://www.youtube.com/@nura.id",
+    "https://www.linkedin.com/company/nura-id",
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "availableLanguage": "Indonesian",
+  },
+};
+
+const stats = [
+  { number: "2022", label: "Tahun Berdiri" },
+  { number: "50+",  label: "Pilihan Warna" },
+  { number: "6",    label: "Material Premium" },
+  { number: "10rb+",label: "Pelanggan Setia" },
+];
+
+const values = [
+  {
+    number: "01",
+    title: "Kualitas Tanpa Kompromi",
+    body: "Setiap bahan dipilih secara cermat. Setiap jahitan dikerjakan dengan standar tertinggi. Kami tidak pernah menurunkan standar kualitas demi margin yang lebih besar.",
+  },
+  {
+    number: "02",
+    title: "Desain yang Timeless",
+    body: "Tren berganti, tapi keeleganan sejati tidak. Koleksi NURA dirancang untuk relevan tidak hanya hari ini, tapi lima tahun dari sekarang.",
+  },
+  {
+    number: "03",
+    title: "Transparansi Penuh",
+    body: "Kami terbuka tentang material yang kami gunakan, harga yang kami tawarkan, dan proses produksi kami. Tidak ada markup tersembunyi, tidak ada klaim yang dilebih-lebihkan.",
+  },
+];
+---
+
+<Layout
+  title="Tentang NURA — Filosofi Silent Luxury Hijab Premium Indonesia"
+  description="NURA adalah brand hijab premium Indonesia dari Jakarta. Menggabungkan estetika editorial dengan kenyamanan sehari-hari melalui filosofi silent luxury — kualitas yang berbicara sendiri."
+  canonical={pageUrl}
+>
+  <SchemaOrg slot="head" schema={organizationSchema} />
+
+  <NavHeader />
+  <Breadcrumb items={[
+    { label: "Beranda", href: "/" },
+    { label: "Tentang NURA" },
+  ]} />
+
+  <main>
+
+    <!-- ── Cinematic Hero ──────────────────────────────────────── -->
+    <section class="relative h-[80vh] min-h-[540px] max-h-[820px] overflow-hidden">
+      <img
+        src="https://images.unsplash.com/photo-1585728748176-455ac5eed962?w=1400&h=900&q=75&auto=format&fit=crop&crop=top"
+        alt="NURA — Silent Luxury Hijab"
+        class="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+        width="1400"
+        height="900"
+      />
+      <!-- layered overlay: dark bottom, lighter top -->
+      <div class="absolute inset-0 bg-gradient-to-t from-jet/90 via-jet/30 to-jet/10"></div>
+
+      <!-- Bottom-left headline -->
+      <div class="absolute bottom-0 left-0 right-0 px-8 md:px-16 pb-14 md:pb-20">
+        <p class="text-[9px] tracking-[0.5em] uppercase text-white/50 mb-5">Tentang NURA</p>
+        <h1 class="font-heading font-light text-white text-[2.6rem] md:text-[4.5rem] leading-[1.08] max-w-3xl">
+          Kemewahan yang<br />Tidak Perlu Berteriak
+        </h1>
+      </div>
+
+      <!-- Top-right founding year badge -->
+      <div class="absolute top-8 right-8 md:right-16 text-right">
+        <p class="text-[9px] tracking-[0.4em] uppercase text-white/40">Est.</p>
+        <p class="font-heading font-light text-white/60 text-2xl tracking-widest">2022</p>
+      </div>
+    </section>
+
+    <!-- ── Stats strip ─────────────────────────────────────────── -->
+    <section class="border-b border-zinc-100">
+      <div class="max-w-[1440px] mx-auto px-6 md:px-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 divide-x divide-zinc-100">
+          {stats.map(({ number, label }) => (
+            <div class="py-10 px-6 md:px-10 text-center">
+              <p class="font-heading font-light text-ink text-[2.2rem] md:text-[2.8rem] leading-none mb-2">
+                {number}
+              </p>
+              <p class="text-[10px] tracking-[0.25em] uppercase text-muted">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Manifesto split ─────────────────────────────────────── -->
+    <section class="grid grid-cols-1 md:grid-cols-2">
+
+      <!-- Image -->
+      <div class="aspect-[4/3] md:aspect-auto md:min-h-[560px] overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1574297500578-afae55026ff3?w=900&h=720&q=70&auto=format&fit=crop&crop=faces,center"
+          alt="Filosofi NURA"
+          class="w-full h-full object-cover"
+          loading="lazy"
+          width="900"
+          height="720"
+        />
+      </div>
+
+      <!-- Quote -->
+      <div class="bg-jet flex items-center px-10 md:px-16 lg:px-20 py-16 md:py-24">
+        <div>
+          <div class="w-8 h-px bg-white/20 mb-10"></div>
+          <p class="text-[9px] tracking-[0.5em] uppercase text-white/40 mb-8">Manifesto</p>
+          <blockquote class="font-heading font-light text-white text-[1.5rem] md:text-[1.9rem] leading-[1.45] mb-10">
+            "Kami percaya bahwa menutup aurat bukan berarti menyembunyikan diri — melainkan memilih bagaimana kamu ingin dilihat dunia."
+          </blockquote>
+          <p class="text-[11px] text-white/40 tracking-[0.15em]">— Tim Pendiri NURA, 2022</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Brand Story ─────────────────────────────────────────── -->
+    <section class="max-w-[1440px] mx-auto px-6 md:px-10 py-24 md:py-32">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-x-16 gap-y-12">
+
+        <!-- Sticky label + pull quote -->
+        <div class="md:col-span-4">
+          <div class="md:sticky md:top-28">
+            <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-8">Cerita Kami</p>
+            <!-- Pull quote -->
+            <div class="border-l-2 border-silver pl-5 mt-8">
+              <p class="font-heading font-light text-ink text-[1.1rem] leading-[1.55]">
+                "Setiap produk yang kami luncurkan telah melalui pemakaian riil oleh tim kami."
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story text -->
+        <div class="md:col-span-8 space-y-7 text-[14.5px] text-muted leading-[1.9]">
+          <p>
+            NURA lahir pada 2022 dari sebuah pertanyaan sederhana: mengapa hijab premium harus selalu identik
+            dengan harga yang tidak terjangkau, atau desain yang terlalu flashy? Kami percaya ada celah di
+            pasar untuk hijab yang benar-benar berkualitas — dalam material, pengerjaan, dan desain — dengan
+            harga yang respectful terhadap budget wanita Indonesia.
+          </p>
+          <p>
+            Nama NURA diambil dari kata Arab yang berarti <em class="text-ink not-italic font-normal">"cahaya"</em>.
+            Ini bukan sekadar nama — ini adalah harapan kami bahwa setiap wanita yang mengenakan hijab NURA
+            akan memancarkan cahaya kepercayaan diri yang berasal dari dalam, bukan dari label di luar.
+          </p>
+          <p>
+            Kami memulai dengan 3 SKU dan sebuah meja kecil di Jakarta. Hari ini, koleksi kami telah
+            berkembang menjadi puluhan pilihan material dan ratusan warna, tapi filosofi kami tetap sama:
+            material terbaik, jahitan terbaik, warna terbaik — tanpa perlu label mewah untuk membuktikannya.
+          </p>
+          <p>
+            Tim NURA terdiri dari perempuan-perempuan yang memahami kebutuhan perempuan Muslim Indonesia
+            secara langsung — karena kami juga penggunanya. Setiap produk yang kami luncurkan telah melalui
+            pemakaian riil oleh tim kami sebelum sampai ke tangan kamu.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Values ─────────────────────────────────────────────── -->
+    <section class="max-w-[1440px] mx-auto px-6 md:px-10 py-24 md:py-32">
+      <div class="flex items-end justify-between mb-16 pb-8 border-b border-zinc-100">
+        <p class="text-[10px] tracking-[0.35em] uppercase text-muted">Nilai-Nilai Kami</p>
+        <p class="text-[11px] text-muted hidden md:block">Yang tidak pernah berubah</p>
+      </div>
+
+      <div class="divide-y divide-zinc-100">
+        {values.map(({ number, title, body }) => (
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 py-10 md:py-14 group">
+            <div class="md:col-span-1">
+              <span class="font-heading font-light text-[1.5rem] text-silver">{number}</span>
+            </div>
+            <div class="md:col-span-4">
+              <h2 class="font-heading font-light text-ink text-[1.4rem] md:text-[1.65rem] leading-snug">
+                {title}
+              </h2>
+            </div>
+            <div class="md:col-span-7 md:pl-8 flex items-center">
+              <p class="text-sm text-muted leading-relaxed">{body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── CTA dark ────────────────────────────────────────────── -->
+    <section class="bg-jet py-28 px-6 md:px-10">
+      <div class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-end">
+        <div>
+          <p class="text-[9px] tracking-[0.5em] uppercase text-white/40 mb-6">Jadi Bagian dari NURA</p>
+          <h2 class="font-heading font-light text-white text-[2rem] md:text-[2.8rem] leading-[1.2]">
+            Temukan hijab yang<br />berbicara untuk dirimu.
+          </h2>
+        </div>
+        <div class="md:text-right">
+          <p class="text-sm text-white/50 leading-relaxed mb-8 max-w-xs md:ml-auto">
+            Mulai dari voal ringan untuk sehari-hari hingga ceruti elegan untuk acara formal — semua ada di koleksi NURA.
+          </p>
+          <div class="flex gap-6 md:justify-end">
+            <a
+              href="/produk/"
+              class="inline-flex items-center gap-3 bg-white text-jet text-[10px] tracking-[0.25em] uppercase px-7 py-3.5 hover:bg-silver transition-colors duration-200"
+            >
+              Lihat Koleksi
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+            <a
+              href="/faq/"
+              class="inline-flex items-center gap-3 text-[10px] tracking-[0.25em] uppercase text-white/60 border-b border-white/30 pb-px hover:text-white hover:border-white transition-colors duration-200"
+            >
+              FAQ
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Social ──────────────────────────────────────────────── -->
+    <section class="max-w-[1440px] mx-auto px-6 md:px-10 py-16">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div>
+          <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-2">Ikuti Perjalanan Kami</p>
+          <p class="font-heading font-light text-ink text-2xl">@nura.id</p>
+        </div>
+        <div class="flex gap-8">
+          {[
+            { label: "Instagram", href: "https://instagram.com/nura.id" },
+            { label: "TikTok",    href: "https://tiktok.com/@nura.id" },
+            { label: "YouTube",   href: "https://youtube.com/@nura.id" },
+          ].map(({ label, href }) => (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[11px] tracking-[0.2em] uppercase text-ink border-b border-ink pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200"
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <SiteFooter />
+</Layout>

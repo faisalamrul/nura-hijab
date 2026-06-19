@@ -1,0 +1,88 @@
+---
+import SeoHead from "../components/SeoHead.astro";
+import "../styles/global.css";
+
+const FONT_URL =
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@400;500;600&display=swap";
+
+// Latin-subset woff2 for above-the-fold fonts — preloaded before font CSS is parsed
+const FONT_CORMORANT_300 =
+  "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtKky2F7g.woff2";
+const FONT_INTER_400 =
+  "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2";
+
+interface ArticleMeta {
+  publishedTime: string;
+  modifiedTime?: string | undefined;
+  section?: string | undefined;
+  author?: string | undefined;
+  keywords?: string[] | undefined;
+}
+
+interface Props {
+  title: string;
+  description?: string | undefined;
+  canonical?: string | undefined;
+  ogImage?: string | undefined;
+  ogType?: "website" | "article" | undefined;
+  article?: ArticleMeta | undefined;
+  keywords?: string[] | undefined;
+  noindex?: boolean | undefined;
+  preloadImage?: string | undefined;
+  preloadImageSrcset?: string | undefined;
+}
+
+const { title, description, canonical, ogImage, ogType, article, keywords, noindex, preloadImage, preloadImageSrcset } = Astro.props;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Preconnect: font CDN + image CDN for LCP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
+    <!-- Preload woff2 binaries before font CSS is parsed -->
+    <link rel="preload" as="font" type="font/woff2" href={FONT_CORMORANT_300} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={FONT_INTER_400} crossorigin />
+
+    <!-- LCP image preload with srcset so browser picks the right size -->
+    {preloadImage && (
+      <link
+        rel="preload"
+        as="image"
+        href={preloadImage}
+        imagesrcset={preloadImageSrcset}
+        imagesizes="100vw"
+        fetchpriority="high"
+      />
+    )}
+
+    <!-- Fonts: async load (non-render-blocking) with fallback for noscript -->
+    <link rel="preload" href={FONT_URL} as="style" />
+    <link rel="stylesheet" href={FONT_URL} media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href={FONT_URL} /></noscript>
+
+    <SeoHead
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogImage={ogImage}
+      ogType={ogType}
+      article={article}
+      keywords={keywords}
+      noindex={noindex}
+    />
+
+    <!-- Per-page head content (schema, etc.) -->
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

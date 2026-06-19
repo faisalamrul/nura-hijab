@@ -1,0 +1,419 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import SchemaOrg from "../../components/SchemaOrg.astro";
+import NavHeader from "../../components/NavHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import { CartButton } from "../../components/CartButton";
+
+export async function getStaticPaths() {
+  const products = await getCollection("products");
+  return products.map((p) => ({
+    params: { id: p.id },
+    props: { product: p },
+  }));
+}
+
+interface Props {
+  product: CollectionEntry<"products">;
+}
+
+const { product } = Astro.props;
+const { name, price, variants, image, material, description, sku, colors, inStock, badge } =
+  product.data;
+
+// Related products (same material family, exclude self)
+const allProducts = await getCollection("products");
+const related = allProducts
+  .filter((p) => p.id !== product.id && p.data.material === material)
+  .slice(0, 4);
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+const pageUrl = `${siteUrl}/produk/${product.id}/`;
+
+const formattedPrice = new Intl.NumberFormat("id-ID", {
+  style: "currency",
+  currency: "IDR",
+  minimumFractionDigits: 0,
+}).format(price);
+
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": name,
+  "description": description ?? `${name} — koleksi hijab premium NURA dengan filosofi silent luxury.`,
+  "image": image,
+  "sku": sku ?? product.id,
+  "brand": {
+    "@type": "Brand",
+    "name": "NURA",
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": pageUrl,
+    "priceCurrency": "IDR",
+    "price": price,
+    "availability": inStock
+      ? "https://schema.org/InStock"
+      : "https://schema.org/OutOfStock",
+    "itemCondition": "https://schema.org/NewCondition",
+    "seller": {
+      "@type": "Organization",
+      "name": "NURA",
+    },
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "24",
+    "bestRating": "5",
+    "worstRating": "1",
+  },
+};
+
+// Derive material-based feature tags
+const MATERIAL_FEATURES: Record<string, string[]> = {
+  "voal": ["Breathable", "Ringan", "Tidak Transparan", "Anti Kusut"],
+  "ceruti": ["Drape Elegan", "Tekstur Micro-Crinkle", "Tahan Lama", "Formal-Ready"],
+  "square": ["Serbaguna", "Easy Styling", "Motif Beragam", "Tahan Lama"],
+  "bella": ["Tekstur Lembut", "Ringan", "Kasual–Semi Formal", "18+ Warna"],
+  "pashmina": ["Panjang", "Flowing", "Bisa Dilipat", "Multifungsi"],
+  "jersey": ["Stretchy", "Instan", "No-Pin", "Aktif"],
+  "sifon": ["Kilau Halus", "Ultra Ringan", "Mewah", "Event-Ready"],
+  "diamond": ["Tekstur Unik", "Semi-Formal", "Tahan Kusut"],
+  "crepe": ["Matte Elegan", "Structured", "Formal"],
+};
+
+function getFeatures(): string[] {
+  const mat = (material ?? "").toLowerCase();
+  for (const [key, tags] of Object.entries(MATERIAL_FEATURES)) {
+    if (mat.includes(key)) return tags;
+  }
+  return ["Premium Quality", "Handcrafted", "Long-lasting"];
+}
+
+const features = getFeatures();
+---
+
+<Layout
+  title={`${name} — NURA`}
+  description={description ?? `${name} NURA: ${material ?? ""}, tersedia ${variants} pilihan warna. Kualitas premium silent luxury untuk wanita Muslim modern Indonesia.`}
+  canonical={pageUrl}
+  ogImage={image}
+>
+  <SchemaOrg slot="head" schema={productSchema} />
+
+  <NavHeader />
+  <Breadcrumb items={[
+    { label: "Beranda", href: "/" },
+    { label: "Koleksi", href: "/produk/" },
+    { label: name },
+  ]} />
+
+  <main>
+
+    <!-- ── Product layout ────────────────────────────────── -->
+    <div class="max-w-[1440px] mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-[58%_42%] min-h-[calc(100vh-80px)]">
+
+        <!-- LEFT — Sticky image -->
+        <div class="relative bg-[#f8f7f5]">
+          <div class="lg:sticky lg:top-0 lg:h-screen overflow-hidden">
+            <img
+              src={image}
+              alt={name}
+              class="w-full h-full object-cover object-center"
+              loading="eager"
+              fetchpriority="high"
+              width="1000"
+              height="1333"
+            />
+
+            <!-- Badge overlay -->
+            {badge && (
+              <div class="absolute top-6 right-6">
+                <span class="bg-jet text-white text-[8.5px] tracking-[0.25em] uppercase px-3 py-1.5">
+                  {badge}
+                </span>
+              </div>
+            )}
+
+            <!-- Out of stock overlay -->
+            {!inStock && (
+              <div class="absolute inset-0 bg-white/60 flex items-center justify-center">
+                <span class="text-[11px] tracking-[0.4em] uppercase text-ink border border-ink px-5 py-2.5">
+                  Stok Habis
+                </span>
+              </div>
+            )}
+
+            <!-- Image nav hint (mobile) -->
+            <div class="absolute bottom-5 left-0 right-0 flex justify-center lg:hidden">
+              <div class="flex gap-1.5">
+                <div class="w-5 h-px bg-white/80"></div>
+                <div class="w-2 h-px bg-white/30"></div>
+                <div class="w-2 h-px bg-white/30"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT — Product info -->
+        <div class="px-8 md:px-12 lg:px-14 py-12 lg:py-16 flex flex-col justify-between">
+          <div>
+
+            <!-- Material label -->
+            {material && (
+              <p class="text-[9.5px] tracking-[0.4em] uppercase text-muted mb-5">
+                {material}
+              </p>
+            )}
+
+            <!-- Product name -->
+            <h1 class="font-heading font-light text-ink text-[1.9rem] md:text-[2.5rem] leading-[1.12] mb-5">
+              {name}
+            </h1>
+
+            <!-- Rating -->
+            <div class="flex items-center gap-3 mb-6">
+              <div class="flex gap-0.5" aria-label="Rating 4.8 dari 5">
+                {[1,2,3,4,5].map((star) => (
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill={star <= 4 ? "currentColor" : "none"}
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    class={star <= 4 ? "text-amber-400" : "text-amber-200"}
+                    aria-hidden="true"
+                  >
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                ))}
+              </div>
+              <span class="text-[10.5px] text-muted">4.8 — 24 ulasan</span>
+            </div>
+
+            <!-- Price -->
+            <p class="text-[1.75rem] font-light text-ink tabular-nums tracking-tight mb-8">
+              {formattedPrice}
+            </p>
+
+            <!-- Divider -->
+            <div class="w-full h-px bg-zinc-100 mb-8"></div>
+
+            <!-- Cart button (React island) — includes color selector -->
+            <CartButton
+              client:load
+              productId={product.id}
+              productName={name}
+              price={price}
+              image={image}
+              colors={colors ?? []}
+            />
+
+            <!-- Stock + SKU row -->
+            <div class="mt-5 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class={`inline-block w-1.5 h-1.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-zinc-300"}`}></span>
+                <span class="text-[10.5px] text-muted">{inStock ? "Tersedia" : "Stok habis"}</span>
+              </div>
+              {sku && (
+                <span class="text-[9.5px] text-muted/60 tracking-wider">SKU {sku}</span>
+              )}
+            </div>
+
+            <!-- Divider -->
+            <div class="w-full h-px bg-zinc-100 mt-8 mb-8"></div>
+
+            <!-- Feature tags -->
+            <div>
+              <p class="text-[9.5px] tracking-[0.3em] uppercase text-muted mb-4">Karakteristik</p>
+              <div class="flex flex-wrap gap-2">
+                {features.map((f) => (
+                  <span class="text-[10px] tracking-[0.08em] border border-zinc-200 text-ink px-3 py-1.5">
+                    {f}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <!-- Delivery info -->
+            <div class="mt-8 space-y-3">
+              {[
+                {
+                  icon: `<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>`,
+                  text: "Gratis ongkir min. Rp150.000",
+                },
+                {
+                  icon: `<polyline points="20 6 9 17 4 12"/>`,
+                  text: "Dikemas premium, dikirim 1–3 hari kerja",
+                },
+                {
+                  icon: `<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>`,
+                  text: "Pengembalian mudah dalam 7 hari",
+                },
+              ].map(({ icon, text }) => (
+                <div class="flex items-center gap-3">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true" class="text-muted shrink-0" set:html={icon} />
+                  <p class="text-[11px] text-muted">{text}</p>
+                </div>
+              ))}
+            </div>
+
+          </div>
+
+          <!-- Bottom link -->
+          <div class="mt-12 pt-6 border-t border-zinc-100">
+            <a
+              href="/faq/"
+              class="text-[10px] tracking-[0.15em] uppercase text-muted hover:text-ink transition-colors duration-150 flex items-center gap-2"
+            >
+              Pertanyaan? Lihat FAQ
+              <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Detail accordion section ──────────────────────── -->
+    <section class="max-w-[1440px] mx-auto px-6 md:px-10 py-16 md:py-20 border-t border-zinc-100">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+
+        <div class="md:col-span-4">
+          <p class="text-[10px] tracking-[0.35em] uppercase text-muted">Detail Produk</p>
+        </div>
+
+        <div class="md:col-span-8 space-y-8">
+          {description && (
+            <div>
+              <p class="text-[13px] text-muted leading-[1.85]">{description}</p>
+            </div>
+          )}
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4 pt-4 border-t border-zinc-100">
+            {material && (
+              <div>
+                <p class="text-[9px] tracking-[0.3em] uppercase text-muted mb-1.5">Material</p>
+                <p class="text-[13px] text-ink">{material}</p>
+              </div>
+            )}
+            <div>
+              <p class="text-[9px] tracking-[0.3em] uppercase text-muted mb-1.5">Pilihan Warna</p>
+              <p class="text-[13px] text-ink">{variants} warna</p>
+            </div>
+            {colors && colors.length > 0 && (
+              <div class="sm:col-span-2">
+                <p class="text-[9px] tracking-[0.3em] uppercase text-muted mb-2.5">Tersedia Dalam</p>
+                <div class="flex flex-wrap gap-1.5">
+                  {colors.map((c) => (
+                    <span class="text-[10px] border border-zinc-100 text-muted px-2.5 py-1">{c}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {sku && (
+              <div>
+                <p class="text-[9px] tracking-[0.3em] uppercase text-muted mb-1.5">SKU</p>
+                <p class="text-[13px] text-ink">{sku}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Care instructions ──────────────────────────────── -->
+    <section class="max-w-[1440px] mx-auto px-6 md:px-10 pb-16 md:pb-20 border-t border-zinc-100 pt-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div class="md:col-span-4">
+          <p class="text-[10px] tracking-[0.35em] uppercase text-muted">Cara Perawatan</p>
+        </div>
+        <div class="md:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-5">
+          {[
+            { icon: `<path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5 5a1 1 0 0 1 0 1.41l-5 5a1 1 0 0 1-1.41-1.41L13.69 11H2.05A10 10 0 1 0 12 2z"/>`, label: "Cuci tangan atau delicate cycle" },
+            { icon: `<path d="M2 12h20M2 12a5 5 0 0 1 5-5h10a5 5 0 0 1 5 5M2 12a5 5 0 0 0 5 5h10a5 5 0 0 0 5-5"/><line x1="12" y1="7" x2="12" y2="3"/>`, label: "Jemur teduh, jangan diperas" },
+            { icon: `<path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>`, label: "Setrika suhu rendah" },
+            { icon: `<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>`, label: "Simpan terlipat rapi" },
+          ].map(({ icon, label }) => (
+            <div class="flex flex-col items-start gap-3">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true" class="text-muted" set:html={icon} />
+              <p class="text-[11px] text-muted leading-snug">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Related products ───────────────────────────────── -->
+    {related.length > 0 && (
+      <section class="border-t border-zinc-100">
+        <div class="max-w-[1440px] mx-auto px-6 md:px-10 pt-14 pb-20">
+          <div class="flex items-end justify-between mb-10">
+            <div>
+              <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-2">Produk Lainnya</p>
+              <h2 class="font-heading font-light text-ink text-[1.4rem]">Koleksi Pilihan</h2>
+            </div>
+            <a
+              href="/produk/"
+              class="text-[10.5px] tracking-[0.15em] uppercase text-muted hover:text-ink transition-colors duration-200 hidden md:flex items-center gap-2"
+            >
+              Lihat Semua
+              <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-x-4 md:gap-x-7 gap-y-10">
+            {related.map((r) => (
+              <a href={`/produk/${r.id}`} class="group block">
+                <div class="relative aspect-[3/4] overflow-hidden mb-4 bg-[#f8f7f5]">
+                  <img
+                    src={r.data.image}
+                    alt={r.data.name}
+                    class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                    loading="lazy"
+                    decoding="async"
+                    width="400"
+                    height="533"
+                  />
+                  {r.data.badge && (
+                    <span class="absolute top-3 right-3 bg-jet text-white text-[8px] tracking-[0.2em] uppercase px-2.5 py-1">
+                      {r.data.badge}
+                    </span>
+                  )}
+                </div>
+                {r.data.material && (
+                  <p class="text-[9px] tracking-[0.2em] uppercase text-muted mb-1">{r.data.material}</p>
+                )}
+                <h3 class="font-heading font-light text-ink text-[1rem] leading-tight mb-1.5">
+                  {r.data.name}
+                </h3>
+                <p class="text-[12.5px] font-medium text-ink tabular-nums">
+                  {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(r.data.price)}
+                </p>
+              </a>
+            ))}
+          </div>
+
+          <div class="mt-10 text-center md:hidden">
+            <a href="/produk/" class="text-[10.5px] tracking-[0.2em] uppercase text-ink border-b border-ink pb-0.5">
+              Lihat Semua Produk
+            </a>
+          </div>
+        </div>
+      </section>
+    )}
+
+  </main>
+
+  <SiteFooter />
+</Layout>

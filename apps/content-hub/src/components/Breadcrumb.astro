@@ -1,0 +1,56 @@
+---
+import SchemaOrg from "./SchemaOrg.astro";
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string | undefined;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => {
+    const listItem: Record<string, unknown> = {
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.label,
+    };
+    if (item.href) {
+      listItem["item"] = `${siteUrl}${item.href}`;
+    }
+    return listItem;
+  }),
+};
+---
+
+<SchemaOrg schema={breadcrumbSchema} />
+
+<nav aria-label="Breadcrumb" class="px-5 md:px-8 lg:px-12 py-3 border-b border-zinc-100">
+  <ol class="flex items-center gap-1.5 flex-wrap">
+    {items.map((item, index) => (
+      <li class="flex items-center gap-1.5">
+        {index > 0 && (
+          <span class="text-zinc-300 text-[10px] select-none" aria-hidden="true">›</span>
+        )}
+        {item.href ? (
+          <a
+            href={item.href}
+            class="text-[11px] tracking-[0.06em] text-muted hover:text-ink transition-colors duration-150"
+          >
+            {item.label}
+          </a>
+        ) : (
+          <span class="text-[11px] tracking-[0.06em] text-ink">{item.label}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>

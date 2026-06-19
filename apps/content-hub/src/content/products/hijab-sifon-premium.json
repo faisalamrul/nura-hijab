@@ -1,0 +1,13 @@
+{
+  "name": "Hijab Sifon Premium",
+  "price": 225000,
+  "variants": 6,
+  "tag": "terbaru",
+  "badge": "New",
+  "image": "https://images.unsplash.com/photo-1613447895817-e617a4093f50?w=600&h=800&q=70&auto=format&fit=crop&crop=faces,center",
+  "sku": "NR-SFN-001",
+  "material": "Sifon Silk",
+  "description": "Hijab sifon silk premium dengan kilau lembut dan tekstur yang sangat halus di kulit. Pilihan terbaik untuk acara spesial, pernikahan, dan tampilan formal high-end. Tersedia dalam 6 warna pilihan yang dikurasi khusus untuk musim ini.",
+  "colors": ["Pearl White", "Champagne Gold", "Dusty Rose", "Deep Plum", "Midnight Navy", "Sage Mist"],
+  "inStock": true
+}

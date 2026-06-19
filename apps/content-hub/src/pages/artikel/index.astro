@@ -1,0 +1,215 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import SchemaOrg from "../../components/SchemaOrg.astro";
+import NavHeader from "../../components/NavHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+
+const allArticles = await getCollection("articles");
+const articles = [...allArticles].sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const featured = articles.find((a) => a.data.featured) ?? articles[0]!;
+const rest = articles.filter((a) => a.id !== featured.id);
+
+const categories = ["Semua", ...new Set(articles.map((a) => a.data.category))];
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+const pageUrl = `${siteUrl}/artikel/`;
+
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "NURA Magazine",
+  "description": "Inspirasi styling, tips perawatan hijab, tren mode Muslim, dan editorial tentang filosofi silent luxury dari NURA.",
+  "url": pageUrl,
+  "inLanguage": "id-ID",
+  "publisher": {
+    "@type": "Organization",
+    "name": "NURA",
+    "url": siteUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${siteUrl}/logo.png`,
+    },
+  },
+  "blogPost": articles.map((a) => ({
+    "@type": "BlogPosting",
+    "headline": a.data.title,
+    "description": a.data.excerpt,
+    "image": a.data.image,
+    "datePublished": a.data.date,
+    "url": `${siteUrl}/artikel/${a.id}/`,
+    "articleSection": a.data.category,
+    "timeRequired": `PT${a.data.readTime}M`,
+    "author": {
+      "@type": "Organization",
+      "name": "NURA",
+    },
+  })),
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Beranda", "item": siteUrl },
+    { "@type": "ListItem", "position": 2, "name": "Magazine", "item": pageUrl },
+  ],
+};
+
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+---
+
+<Layout
+  title="Magazine — Inspirasi, Style & Edukasi Hijab NURA"
+  description="Baca artikel terbaru dari NURA: panduan styling hijab, tips perawatan, tren mode, dan editorial tentang filosofi fashion Muslim modern Indonesia."
+  canonical={pageUrl}
+  keywords={["artikel hijab", "styling hijab", "tips hijab premium", "tren hijab 2026", "NURA magazine", "edukasi hijab"]}
+>
+  <SchemaOrg slot="head" schema={blogSchema} />
+  <SchemaOrg slot="head" schema={breadcrumbSchema} />
+
+  <NavHeader />
+  <Breadcrumb items={[{ label: "Beranda", href: "/" }, { label: "Magazine" }]} />
+
+  <main>
+
+    <!-- Featured article hero -->
+    <section class="max-w-[1440px] mx-auto px-6 md:px-10 py-12 md:py-16">
+      <div class="flex items-end justify-between mb-10 pb-6 border-b border-zinc-100">
+        <div>
+          <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-2">Magazine</p>
+          <h1 class="font-heading font-light text-ink text-[2rem] md:text-[2.6rem] leading-tight">Cerita & Inspirasi</h1>
+        </div>
+        <p class="hidden md:block text-[11px] text-muted">{articles.length} artikel</p>
+      </div>
+
+      <!-- Hero: featured article -->
+      <a href={`/artikel/${featured.id}`} class="group grid grid-cols-1 md:grid-cols-2 gap-0 mb-20 block">
+        <div class="aspect-[4/3] md:aspect-auto overflow-hidden">
+          <img
+            src={featured.data.image}
+            alt={featured.data.title}
+            class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            loading="eager"
+          />
+        </div>
+        <div class="bg-surface flex flex-col justify-center px-8 md:px-14 py-12">
+          <p class="text-[9px] tracking-[0.4em] uppercase text-muted mb-5">
+            {featured.data.category} &middot; {featured.data.readTime} mnt baca &middot; {formatDate(featured.data.date)}
+          </p>
+          <h2 class="font-heading font-light text-ink text-[1.7rem] md:text-[2.1rem] leading-[1.25] mb-6 group-hover:text-charcoal transition-colors duration-200">
+            {featured.data.title}
+          </h2>
+          <p class="text-sm text-muted leading-relaxed mb-8 max-w-sm">
+            {featured.data.excerpt}
+          </p>
+          <span class="inline-flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase text-ink border-b border-ink pb-px w-fit group-hover:text-muted group-hover:border-muted transition-colors duration-200">
+            Baca Artikel
+            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+
+      <!-- Category filter -->
+      <div class="flex flex-wrap gap-2 mb-12" id="category-filter">
+        {categories.map((cat) => (
+          <button
+            data-category={cat}
+            class={`category-btn px-4 py-2 text-[10.5px] tracking-[0.12em] uppercase transition-colors duration-150 ${cat === "Semua" ? "bg-jet text-white" : "border border-zinc-200 text-ink hover:border-zinc-400"}`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <!-- Articles grid -->
+      <div id="articles-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-14">
+        {rest.map((article) => (
+          <article
+            class="group relative cursor-pointer article-item"
+            data-category={article.data.category}
+          >
+            <a href={`/artikel/${article.id}`} class="block">
+              <div class="aspect-[3/2] overflow-hidden mb-5">
+                <img
+                  src={article.data.image}
+                  alt={article.data.title}
+                  class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <p class="text-[10px] tracking-[0.3em] uppercase text-muted mb-3">
+                {article.data.category} &middot; {article.data.readTime} mnt &middot; {formatDate(article.data.date)}
+              </p>
+              <h2 class="font-heading font-light text-ink text-[1.15rem] leading-snug mb-3 group-hover:text-muted transition-colors duration-200">
+                {article.data.title}
+              </h2>
+              <p class="text-[12.5px] text-muted leading-relaxed line-clamp-2 mb-4">
+                {article.data.excerpt}
+              </p>
+              <span class="inline-flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase text-ink border-b border-ink pb-px group-hover:text-muted group-hover:border-muted transition-colors duration-200">
+                Baca Selengkapnya
+                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <!-- Empty state (hidden by default) -->
+      <div id="empty-state" class="hidden py-20 text-center">
+        <p class="text-sm text-muted">Tidak ada artikel dalam kategori ini.</p>
+      </div>
+
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".category-btn");
+  const items = document.querySelectorAll<HTMLElement>(".article-item");
+  const emptyState = document.getElementById("empty-state");
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.dataset["category"] ?? "Semua";
+
+      // Update active button
+      buttons.forEach((b) => {
+        b.classList.remove("bg-jet", "text-white");
+        b.classList.add("border", "border-zinc-200", "text-ink");
+      });
+      btn.classList.add("bg-jet", "text-white");
+      btn.classList.remove("border", "border-zinc-200", "text-ink");
+
+      // Filter articles
+      let visible = 0;
+      items.forEach((item) => {
+        const match = cat === "Semua" || item.dataset["category"] === cat;
+        item.style.display = match ? "" : "none";
+        if (match) visible++;
+      });
+
+      if (emptyState) {
+        emptyState.classList.toggle("hidden", visible > 0);
+      }
+    });
+  });
+</script>

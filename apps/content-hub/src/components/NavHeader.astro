@@ -1,0 +1,299 @@
+---
+---
+
+<div class="sticky top-0 z-50">
+
+  <!-- Announcement bar -->
+  <div
+    id="announcement-bar"
+    class="bg-jet text-white text-[10.5px] tracking-[0.14em] py-2.5 px-4 flex items-center justify-center relative"
+  >
+    <p class="text-center">
+      Gratis Ongkir pembelian min. Rp&nbsp;150.000 &middot; Kode:
+      <span class="underline underline-offset-2 cursor-pointer">FREESHIP</span>
+    </p>
+    <button
+      id="close-announcement"
+      aria-label="Tutup pengumuman"
+      class="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors duration-200"
+    >
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M18 6 6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Main header -->
+  <header class="bg-white border-b border-zinc-100">
+    <div class="px-5 md:px-8 lg:px-12">
+
+      <!-- Row 1: Logo + Search + Icons -->
+      <div class="flex items-center gap-2 h-[60px]">
+
+        <a href="/" class="font-heading text-[1.25rem] tracking-[0.4em] font-light text-jet shrink-0 mr-4">
+          NURA
+        </a>
+
+        <div class="flex-1"></div>
+
+        <!-- Search bar (desktop) -->
+        <div class="hidden md:flex items-center border border-zinc-200 hover:border-zinc-400 transition-colors duration-200 mr-1">
+          <input
+            type="search"
+            placeholder="Cari produk hijab..."
+            class="py-[7px] px-3 text-[12px] text-ink placeholder:text-muted/60 focus:outline-none bg-transparent w-[200px]"
+          />
+          <button aria-label="Cari" class="px-2.5 text-muted hover:text-ink transition-colors duration-200 shrink-0">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Right icons -->
+        <div class="flex items-center gap-0.5">
+
+          <!-- Search icon (mobile only) -->
+          <button aria-label="Cari" class="md:hidden flex items-center justify-center w-9 h-9 text-ink/60 hover:text-ink transition-colors duration-200">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </button>
+
+          <!-- Wishlist -->
+          <button aria-label="Wishlist" class="hidden md:flex items-center justify-center w-9 h-9 text-ink/60 hover:text-ink transition-colors duration-200">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+
+          <!-- Cart / bag -->
+          <button aria-label="Keranjang" id="nav-cart-btn" class="flex items-center justify-center w-9 h-9 text-ink/60 hover:text-ink transition-colors duration-200 relative">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <span id="cart-badge" style="display:none" class="absolute top-1.5 right-1.5 w-[14px] h-[14px] items-center justify-center bg-jet text-white text-[8px] font-medium rounded-full">0</span>
+          </button>
+
+          <!-- Account -->
+          <button aria-label="Akun saya" class="hidden md:flex items-center justify-center w-9 h-9 text-ink/60 hover:text-ink transition-colors duration-200">
+            <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </button>
+
+          <!-- Mobile menu trigger -->
+          <button
+            id="mobile-menu-btn"
+            aria-label="Buka menu"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            class="md:hidden flex items-center justify-center w-9 h-9 text-ink"
+          >
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16M4 12h10M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Row 2: centered nav (desktop only) -->
+      <div class="hidden md:flex items-center border-t border-zinc-50 -mx-5 md:-mx-8 lg:-mx-12 px-5 md:px-8 lg:px-12 h-10">
+
+        <div class="flex-1"></div>
+
+        <nav class="flex items-center">
+
+          <div class="mega-group relative">
+            <a href="#" class="flex items-center gap-1 py-2.5 px-5 text-[11px] tracking-[0.08em] font-medium text-ink hover:text-muted transition-colors duration-200 whitespace-nowrap">
+              Hijab
+              <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </a>
+            <div class="mega-dropdown hidden absolute left-1/2 -translate-x-1/2 top-full bg-white border border-zinc-100 py-3 min-w-[160px] z-30">
+              <ul>
+                <li><a href="/koleksi/voal/" class="block px-5 py-2 text-[11.5px] text-ink hover:text-muted hover:bg-zinc-50 transition-colors duration-150">Voal</a></li>
+                <li><a href="/koleksi/ceruti/" class="block px-5 py-2 text-[11.5px] text-ink hover:text-muted hover:bg-zinc-50 transition-colors duration-150">Ceruti</a></li>
+                <li><a href="/koleksi/segi-empat/" class="block px-5 py-2 text-[11.5px] text-ink hover:text-muted hover:bg-zinc-50 transition-colors duration-150">Segi Empat</a></li>
+                <li><a href="/koleksi/pashmina/" class="block px-5 py-2 text-[11.5px] text-ink hover:text-muted hover:bg-zinc-50 transition-colors duration-150">Pashmina</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <a href="/produk/" class="py-2.5 px-5 text-[11px] tracking-[0.08em] font-medium text-ink hover:text-muted transition-colors duration-200 whitespace-nowrap">
+            Semua Produk
+          </a>
+
+          <a href="/artikel/" class="py-2.5 px-5 text-[11px] tracking-[0.08em] font-medium text-ink hover:text-muted transition-colors duration-200 whitespace-nowrap">
+            Magazine
+          </a>
+
+          <a href="/tentang/" class="py-2.5 px-5 text-[11px] tracking-[0.08em] font-medium text-ink hover:text-muted transition-colors duration-200 whitespace-nowrap">
+            Tentang
+          </a>
+
+          <a href="/faq/" class="py-2.5 px-5 text-[11px] tracking-[0.08em] font-medium text-ink hover:text-muted transition-colors duration-200 whitespace-nowrap">
+            FAQ
+          </a>
+
+        </nav>
+
+        <div class="flex-1"></div>
+      </div>
+    </div>
+  </header>
+</div>
+
+<!-- Mobile menu overlay -->
+<div
+  id="mobile-menu"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu navigasi"
+  class="fixed inset-0 z-[100] bg-jet flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 ease-out"
+>
+  <span class="font-heading text-white text-[1.35rem] tracking-[0.4em] font-light absolute top-5 left-6">NURA</span>
+
+  <button
+    id="mobile-menu-close"
+    aria-label="Tutup menu"
+    class="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-white/50 hover:text-white transition-colors duration-200"
+  >
+    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M18 6 6 18M6 6l12 12"/>
+    </svg>
+  </button>
+
+  <nav class="flex flex-col items-center gap-6">
+    {[
+      { label: "Semua Produk", href: "/produk/" },
+      { label: "Voal", href: "/koleksi/voal/" },
+      { label: "Ceruti", href: "/koleksi/ceruti/" },
+      { label: "Segi Empat", href: "/koleksi/segi-empat/" },
+      { label: "Pashmina", href: "/koleksi/pashmina/" },
+      { label: "Magazine", href: "/artikel/" },
+      { label: "Tentang", href: "/tentang/" },
+    ].map(({ label, href }) => (
+      <a
+        href={href}
+        class="font-heading font-light text-white hover:text-silver transition-colors duration-200"
+        style="font-size: clamp(1.6rem, 7vw, 2.6rem); letter-spacing: 0.15em"
+      >
+        {label}
+      </a>
+    ))}
+  </nav>
+
+  <div class="absolute bottom-10 flex gap-10">
+    {["Instagram", "TikTok", "Pinterest"].map((s) => (
+      <a href="#" class="text-white/35 text-[10px] tracking-[0.25em] uppercase hover:text-white/70 transition-colors duration-200">
+        {s}
+      </a>
+    ))}
+  </div>
+</div>
+
+<script>
+  document.getElementById("close-announcement")?.addEventListener("click", () => {
+    const bar = document.getElementById("announcement-bar");
+    if (bar) bar.style.display = "none";
+  });
+
+  // Mobile menu
+  const menuBtn = document.getElementById("mobile-menu-btn");
+  const menuClose = document.getElementById("mobile-menu-close");
+  const menu = document.getElementById("mobile-menu");
+
+  function openMenu() {
+    menu?.classList.remove("opacity-0", "pointer-events-none");
+    menu?.classList.add("opacity-100");
+    menuBtn?.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMenu() {
+    menu?.classList.add("opacity-0", "pointer-events-none");
+    menu?.classList.remove("opacity-100");
+    menuBtn?.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+
+  menuBtn?.addEventListener("click", openMenu);
+  menuClose?.addEventListener("click", closeMenu);
+  menu?.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
+
+  function getCookie(name: string): string | null {
+    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+    return match ? (match[1] ?? null) : null;
+  }
+
+  function setBadge(count: number) {
+    const badge = document.getElementById("cart-badge");
+    if (!badge) return;
+    badge.textContent = String(count);
+    badge.style.setProperty("display", count > 0 ? "flex" : "none", "important");
+  }
+
+  function countFromLocalStorage(): number {
+    try {
+      const cart: unknown[] = JSON.parse(localStorage.getItem("nura-cart") ?? "[]");
+      return cart.length;
+    } catch {
+      return 0;
+    }
+  }
+
+  const cookieSecure = window.location.protocol === "https:" ? "; secure" : "";
+
+  // Called by nura:cart-update (CartButton added an item on this Astro page)
+  // Source of truth: Astro's own localStorage — also write cookie to keep Next.js in sync
+  function onLocalCartUpdate() {
+    const count = countFromLocalStorage();
+    document.cookie = `nura_cart_qty=${count}; path=/; max-age=86400; samesite=lax${cookieSecure}`;
+    setBadge(count);
+  }
+
+  // Called by pageshow (bfcache restore after browser back from Next.js cart page)
+  // Source of truth: cookie written by Next.js persistCart()
+  function onPageShow() {
+    const cookieQty = getCookie("nura_cart_qty");
+    setBadge(cookieQty !== null ? (parseInt(cookieQty, 10) || 0) : countFromLocalStorage());
+  }
+
+  // Sync cart back from Next.js via ?_cart= URL param ("Lanjut Belanja" button)
+  const urlParams = new URLSearchParams(window.location.search);
+  const cartParam = urlParams.get("_cart");
+  if (cartParam) {
+    try {
+      const json = new TextDecoder().decode(Uint8Array.from(atob(cartParam), (c) => c.charCodeAt(0)));
+      localStorage.setItem("nura-cart", json);
+    } catch {
+      // ignore malformed param
+    }
+    urlParams.delete("_cart");
+    const cleanUrl = window.location.pathname + (urlParams.toString() ? "?" + urlParams.toString() : "");
+    window.history.replaceState(null, "", cleanUrl);
+  }
+
+  onPageShow(); // initial badge: cookie wins (set by Next.js) over stale Astro localStorage
+  document.addEventListener("nura:cart-update", onLocalCartUpdate);
+  window.addEventListener("pageshow", onPageShow);
+
+  // Cart icon → redirect to Next.js cart page with encoded cart data
+  // PUBLIC_PAYMENT_URL is set in .env for production; defaults to localhost in dev
+  const CART_URL = `${(import.meta.env as Record<string, string>).PUBLIC_PAYMENT_URL ?? "http://localhost:3000"}/cart`;
+
+  document.getElementById("nav-cart-btn")?.addEventListener("click", () => {
+    try {
+      const raw = localStorage.getItem("nura-cart") ?? "[]";
+      const encoded = btoa(Array.from(new TextEncoder().encode(raw), (b) => String.fromCharCode(b)).join(""));
+      window.location.href = `${CART_URL}?cart=${encoded}`;
+    } catch {
+      window.location.href = CART_URL;
+    }
+  });
+</script>

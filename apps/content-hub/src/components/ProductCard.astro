@@ -1,0 +1,96 @@
+---
+interface Props {
+  name: string;
+  price: number;
+  variants: number;
+  image: string;
+  badge?: string | undefined;
+  material?: string | undefined;
+  inStock?: boolean | undefined;
+  href?: string | undefined;
+}
+
+const { name, price, variants, image, badge, material, inStock = true, href = undefined } = Astro.props;
+
+const formattedPrice = new Intl.NumberFormat("id-ID", {
+  style: "currency",
+  currency: "IDR",
+  minimumFractionDigits: 0,
+}).format(price);
+
+function unsplashSrcSet(src: string): string {
+  const make = (w: number, h: number): string => {
+    try {
+      const u = new URL(src);
+      u.searchParams.set("w", String(w));
+      u.searchParams.set("h", String(h));
+      return `${u.toString()} ${w}w`;
+    } catch {
+      return `${src} ${w}w`;
+    }
+  };
+  return [make(400, 533), make(600, 800)].join(", ");
+}
+
+const imgSrcSet = unsplashSrcSet(image);
+---
+
+<article class="group cursor-pointer relative">
+  <!-- Image -->
+  <div class="relative aspect-[3/4] overflow-hidden mb-4 bg-[#f8f7f5]">
+    <img
+      src={image}
+      srcset={imgSrcSet}
+      sizes="(min-width: 1024px) calc(25vw - 50px), (min-width: 768px) calc(33vw - 36px), calc(50vw - 28px)"
+      alt={name}
+      width="600"
+      height="800"
+      class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+      loading="lazy"
+      decoding="async"
+    />
+
+    <!-- Hover overlay -->
+    <div class="absolute inset-0 bg-gradient-to-t from-jet/55 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <div class="absolute bottom-0 left-0 right-0 px-4 pb-4 translate-y-1.5 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+      <span class="text-[8.5px] tracking-[0.35em] uppercase text-white flex items-center gap-2">
+        Lihat Detail
+        <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </span>
+    </div>
+
+    <!-- Badge top-right -->
+    {badge && (
+      <div class="absolute top-3 right-3 z-10">
+        <span class="bg-jet text-white text-[8px] tracking-[0.2em] uppercase px-2.5 py-1">
+          {badge}
+        </span>
+      </div>
+    )}
+
+    <!-- Out of stock -->
+    {!inStock && (
+      <div class="absolute inset-0 bg-white/60 flex items-center justify-center">
+        <span class="text-[9px] tracking-[0.3em] uppercase text-ink border border-ink px-3 py-1.5">
+          Stok Habis
+        </span>
+      </div>
+    )}
+  </div>
+
+  <!-- Info -->
+  <div>
+    {material && (
+      <p class="text-[9px] tracking-[0.2em] uppercase text-muted mb-1.5">{material}</p>
+    )}
+    <h3 class="font-heading font-light text-[1.05rem] text-ink leading-tight mb-2">{name}</h3>
+    <div class="flex items-center justify-between gap-2">
+      <p class="text-[10px] text-muted">{variants} warna</p>
+      <p class="text-[13px] font-medium text-ink tabular-nums shrink-0">{formattedPrice}</p>
+    </div>
+  </div>
+
+  {href && <a href={href} aria-label={`Lihat detail ${name}`} class="absolute inset-0 z-20"></a>}
+</article>

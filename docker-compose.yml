@@ -1,0 +1,16 @@
+services:
+  content-hub:
+    build:
+      context: .
+      dockerfile: apps/content-hub/Dockerfile
+    ports:
+      - "4321:4321"
+    restart: unless-stopped
+
+  payment:
+    build:
+      context: .
+      dockerfile: apps/payment/Dockerfile
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

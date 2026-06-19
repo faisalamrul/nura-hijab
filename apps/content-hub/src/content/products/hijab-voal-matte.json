@@ -1,0 +1,13 @@
+{
+  "name": "Hijab Voal Matte",
+  "price": 185000,
+  "variants": 12,
+  "tag": "terbaru",
+  "badge": "New",
+  "image": "https://images.unsplash.com/photo-1552874869-5c39ec9288dc?w=600&h=800&q=70&auto=format&fit=crop&crop=faces,center",
+  "sku": "NR-VLM-001",
+  "material": "Voal Matte Premium",
+  "description": "Hijab voal matte premium dengan tekstur lembut dan permukaan anti-silau yang terlihat bersih dan rapi sepanjang hari. Bahan ringan, breathable, dan tidak mudah kusut — ideal untuk aktivitas harian wanita profesional modern.",
+  "colors": ["Off White", "Oat", "Dusty Pink", "Sage", "Steel Blue", "Chocolate Brown", "Deep Plum", "Warm Taupe"],
+  "inStock": true
+}

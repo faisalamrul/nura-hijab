@@ -1,0 +1,54 @@
+---
+interface Props {
+  title: string;
+  excerpt: string;
+  category: string;
+  date: string;
+  readTime: number;
+  image: string;
+  href?: string | undefined;
+}
+
+const { title, excerpt, category, date, readTime, image, href = undefined } = Astro.props;
+
+---
+
+<article class="group relative cursor-pointer">
+  <!-- Image -->
+  <div class="aspect-[3/2] overflow-hidden mb-5">
+    <img
+      src={image}
+      alt={title}
+      width="600"
+      height="400"
+      class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <!-- Meta -->
+  <p class="text-[10px] tracking-[0.3em] uppercase text-muted mb-3">
+    {category} &middot; {readTime} mnt &middot; {new Date(date).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+  </p>
+
+  <!-- Title -->
+  <h3 class="fs-article font-heading font-light text-ink leading-snug mb-3 group-hover:text-muted transition-colors duration-200">
+    {title}
+  </h3>
+
+  <!-- Excerpt -->
+  <p class="text-[12.5px] text-muted leading-relaxed line-clamp-2 mb-4">
+    {excerpt}
+  </p>
+
+  <!-- Read more -->
+  <span class="inline-flex items-center gap-2 text-[10px] tracking-[0.22em] uppercase text-ink border-b border-ink pb-px group-hover:text-muted group-hover:border-muted transition-colors duration-200">
+    Baca Selengkapnya
+    <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 12h14M12 5l7 7-7 7"/>
+    </svg>
+  </span>
+
+  {href && <a href={href} aria-label={title} class="absolute inset-0"></a>}
+</article>

@@ -1,0 +1,123 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import SchemaOrg from "../../components/SchemaOrg.astro";
+import NavHeader from "../../components/NavHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import { KOLEKSI, type KoleksiConfig } from "../../data/koleksi";
+
+export function getStaticPaths() {
+  return KOLEKSI.map((col) => ({ params: { slug: col.slug }, props: { col } }));
+}
+
+interface Props { col: KoleksiConfig }
+const { col } = Astro.props;
+
+const allProducts = await getCollection("products");
+const products = allProducts.filter(col.filter);
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+const pageUrl = `${siteUrl}/koleksi/${col.slug}/`;
+
+const collectionSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": col.schemaName,
+  "description": col.schemaDescription,
+  "url": pageUrl,
+  "inLanguage": "id-ID",
+  "isPartOf": { "@type": "WebSite", "name": "NURA", "url": siteUrl },
+};
+
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": col.schemaName,
+  "numberOfItems": products.length,
+  "itemListElement": products.map((p, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "url": `${siteUrl}/produk/${p.id}/`,
+    "name": p.data.name,
+  })),
+};
+---
+
+<Layout title={col.title} description={col.metaDescription} canonical={pageUrl}>
+  <SchemaOrg slot="head" schema={collectionSchema} />
+  <SchemaOrg slot="head" schema={itemListSchema} />
+
+  <NavHeader />
+  <Breadcrumb items={[
+    { label: "Beranda", href: "/" },
+    { label: "Koleksi", href: "/produk/" },
+    { label: col.label },
+  ]} />
+
+  <main>
+
+    <!-- ── Collection nav tabs ──────────────────────── -->
+    <div class="border-b border-zinc-100 overflow-x-auto">
+      <div class="max-w-[1440px] mx-auto px-6 md:px-10 flex gap-0">
+        {KOLEKSI.map(({ slug, label }) => (
+          <a
+            href={`/koleksi/${slug}/`}
+            class={[
+              "py-4 mr-7 shrink-0 text-[10.5px] tracking-[0.15em] uppercase border-b-[1.5px] transition-colors duration-150",
+              slug === col.slug ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink",
+            ].join(" ")}
+          >
+            {label}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- ── Product grid ──────────────────────────────── -->
+    <section class="max-w-[1440px] mx-auto px-6 md:px-10 pt-8 pb-14">
+      {products.length === 0 ? (
+        <div class="py-32 text-center">
+          <p class="font-heading font-light text-ink text-xl">Belum ada produk di koleksi ini.</p>
+        </div>
+      ) : (
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-7 gap-y-12 md:gap-y-16">
+          {products.map((p) => (
+            <ProductCard
+              name={p.data.name}
+              price={p.data.price}
+              variants={p.data.variants}
+              image={p.data.image}
+              badge={p.data.badge}
+              material={p.data.material}
+              inStock={p.data.inStock}
+              href={`/produk/${p.id}`}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- ── About / SEO section ──────────────────────── -->
+    <section class="max-w-[1440px] mx-auto px-6 md:px-10 pb-24 border-t border-zinc-100 pt-16">
+      <div class="flex flex-col md:flex-row md:items-baseline gap-3 md:gap-10 mb-10 pb-8 border-b border-zinc-100">
+        <p class="text-[10px] tracking-[0.35em] uppercase text-muted shrink-0">Panduan Material</p>
+        <h2 class="font-heading font-light text-ink text-[1.5rem] md:text-[1.9rem] leading-snug">
+          Tentang Koleksi Hijab {col.label} NURA
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="text-[13.5px] text-muted leading-[1.9] md:pr-14 md:border-r md:border-zinc-100">
+          <p set:html={col.seoLeft} />
+        </div>
+        <div class="text-[13.5px] text-muted leading-[1.9] md:pl-14 mt-6 md:mt-0">
+          <p set:html={col.seoRight} />
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <SiteFooter />
+</Layout>

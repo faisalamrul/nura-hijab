@@ -1,0 +1,145 @@
+---
+import Layout from "../layouts/Layout.astro";
+import NavHeader from "../components/NavHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+const pageUrl = `${siteUrl}/pengiriman/`;
+
+const zones = [
+  { area: "Jabodetabek", regular: "1–2 hari kerja", express: "Same day / Next day" },
+  { area: "Jawa & Bali", regular: "2–3 hari kerja", express: "1–2 hari kerja" },
+  { area: "Sumatera", regular: "3–5 hari kerja", express: "2–3 hari kerja" },
+  { area: "Kalimantan & Sulawesi", regular: "3–5 hari kerja", express: "2–4 hari kerja" },
+  { area: "Papua & Maluku", regular: "5–7 hari kerja", express: "3–5 hari kerja" },
+];
+---
+
+<Layout
+  title="Informasi Pengiriman — NURA"
+  description="Informasi lengkap pengiriman NURA ke seluruh Indonesia. Gratis ongkir min. Rp150.000, estimasi waktu pengiriman per zona, mitra logistik, dan cara melacak pesanan."
+  canonical={pageUrl}
+>
+  <NavHeader />
+  <Breadcrumb items={[
+    { label: "Beranda", href: "/" },
+    { label: "Pengiriman" },
+  ]} />
+
+  <main class="max-w-[1440px] mx-auto px-6 md:px-10 py-16 md:py-20">
+    <div class="max-w-3xl">
+
+      <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-3">Layanan</p>
+      <h1 class="font-heading font-light text-ink text-[2.2rem] md:text-[3rem] leading-tight mb-4">
+        Informasi Pengiriman
+      </h1>
+      <p class="text-sm text-muted leading-relaxed mb-16 max-w-xl">
+        Kami mengirimkan produk ke seluruh wilayah Indonesia bekerja sama dengan mitra logistik terpercaya.
+      </p>
+
+      <!-- Free shipping highlight -->
+      <div class="border border-zinc-100 bg-surface p-8 mb-16">
+        <p class="text-[10px] tracking-[0.3em] uppercase text-muted mb-3">Penawaran</p>
+        <h2 class="font-heading font-light text-ink text-xl mb-3">Gratis Ongkos Kirim</h2>
+        <p class="text-sm text-muted leading-relaxed">
+          Nikmati gratis ongkos kirim ke seluruh Indonesia untuk setiap pembelian minimum <strong class="text-ink">Rp150.000</strong>. Gunakan kode <strong class="text-ink font-mono">FREESHIP</strong> saat checkout. Berlaku untuk pengiriman reguler dengan JNE REG, J&T Regular, dan SiCepat REG.
+        </p>
+      </div>
+
+      <!-- Estimasi pengiriman -->
+      <section class="mb-16">
+        <h2 class="font-heading font-light text-ink text-xl mb-8">Estimasi Waktu Pengiriman</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200">
+                <th class="text-left py-3 pr-8 text-[10px] tracking-[0.2em] uppercase text-muted font-normal">Zona</th>
+                <th class="text-left py-3 pr-8 text-[10px] tracking-[0.2em] uppercase text-muted font-normal">Reguler</th>
+                <th class="text-left py-3 text-[10px] tracking-[0.2em] uppercase text-muted font-normal">Ekspres</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100">
+              {zones.map(({ area, regular, express }) => (
+                <tr>
+                  <td class="py-4 pr-8 text-ink font-medium text-[13px]">{area}</td>
+                  <td class="py-4 pr-8 text-muted text-[13px]">{regular}</td>
+                  <td class="py-4 text-muted text-[13px]">{express}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-muted/70 mt-4">
+          *Estimasi dihitung dari hari kerja setelah pesanan dikonfirmasi. Hari Minggu dan hari libur nasional tidak termasuk.
+        </p>
+      </section>
+
+      <!-- Proses pengiriman -->
+      <section class="mb-16">
+        <h2 class="font-heading font-light text-ink text-xl mb-8">Proses Pengiriman</h2>
+        <div class="space-y-6">
+          {[
+            { step: "01", title: "Pemesanan Dikonfirmasi", desc: "Pesanan kamu diterima dan pembayaran dikonfirmasi. Kamu akan menerima email konfirmasi beserta nomor pesanan." },
+            { step: "02", title: "Proses Packing", desc: "Tim kami mempersiapkan pesanan kamu dengan packaging premium NURA. Proses packing memakan waktu 1 hari kerja." },
+            { step: "03", title: "Diserahkan ke Kurir", desc: "Paket diserahkan ke mitra kurir pilihan kamu. Nomor resi akan dikirimkan via email dan WhatsApp." },
+            { step: "04", title: "Dalam Pengiriman", desc: "Paket dalam perjalanan menuju alamatmu. Pantau status pengiriman menggunakan nomor resi yang telah dikirimkan." },
+            { step: "05", title: "Paket Diterima", desc: "Paket tiba di alamatmu. Pastikan kemasan dalam kondisi baik sebelum menandatangani bukti penerimaan." },
+          ].map(({ step, title, desc }) => (
+            <div class="flex gap-6">
+              <span class="text-[10px] tracking-[0.2em] text-muted/50 font-mono shrink-0 pt-0.5">{step}</span>
+              <div>
+                <h3 class="text-[13px] font-medium text-ink mb-1">{title}</h3>
+                <p class="text-sm text-muted leading-relaxed">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Mitra kurir -->
+      <section class="mb-16">
+        <h2 class="font-heading font-light text-ink text-xl mb-6">Mitra Kurir</h2>
+        <p class="text-sm text-muted leading-relaxed mb-6">
+          NURA bekerja sama dengan mitra logistik terpercaya di Indonesia:
+        </p>
+        <ul class="space-y-3 text-sm text-muted">
+          <li>· <strong class="text-ink">JNE</strong> — REG (reguler) dan YES (ekspres)</li>
+          <li>· <strong class="text-ink">J&T Express</strong> — Regular dan Express</li>
+          <li>· <strong class="text-ink">SiCepat</strong> — REG dan HALU</li>
+          <li>· <strong class="text-ink">Anteraja</strong> — Reguler dan Same Day (Jabodetabek)</li>
+          <li>· <strong class="text-ink">GoSend / GrabExpress</strong> — Same day Jabodetabek</li>
+        </ul>
+      </section>
+
+      <!-- FAQ mini -->
+      <section>
+        <h2 class="font-heading font-light text-ink text-xl mb-8">Pertanyaan Umum</h2>
+        <div class="space-y-6 text-sm">
+          {[
+            {
+              q: "Bagaimana cara melacak pesanan saya?",
+              a: "Nomor resi akan dikirimkan via email dan WhatsApp setelah paket diserahkan ke kurir. Kamu bisa melacak status pengiriman langsung di website atau aplikasi kurir yang bersangkutan.",
+            },
+            {
+              q: "Apakah ada batas berat atau dimensi paket?",
+              a: "Tidak ada batas khusus dari NURA. Biaya pengiriman dihitung berdasarkan berat aktual atau berat volume (mana yang lebih besar), sesuai ketentuan masing-masing kurir.",
+            },
+            {
+              q: "Bagaimana jika paket saya hilang atau rusak dalam pengiriman?",
+              a: "Setiap pesanan dilengkapi asuransi pengiriman. Jika terjadi kehilangan atau kerusakan yang disebabkan oleh proses pengiriman, hubungi customer service kami dalam 3 hari setelah estimasi tiba dengan menyertakan foto kemasan dan isi paket.",
+            },
+          ].map(({ q, a }) => (
+            <div class="border-t border-zinc-100 pt-6">
+              <h3 class="font-medium text-ink mb-2">{q}</h3>
+              <p class="text-muted leading-relaxed">{a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <SiteFooter />
+</Layout>

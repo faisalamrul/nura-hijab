@@ -1,0 +1,13 @@
+{
+  "name": "Hijab Diamond Crepe",
+  "price": 165000,
+  "variants": 20,
+  "tag": "terlaris",
+  "badge": "Bestseller",
+  "image": "https://images.unsplash.com/photo-1613611927458-3ddd4b0afdb9?w=600&h=800&q=70&auto=format&fit=crop&crop=faces,center",
+  "sku": "NR-DCP-001",
+  "material": "Diamond Crepe",
+  "description": "Hijab diamond crepe dengan tekstur khas diamond yang memberikan dimensi visual elegan. Bahan tebal namun tetap ringan, tidak mudah kusut, dan cocok untuk tampilan formal maupun kasual. Tersedia dalam 20 pilihan warna timeless.",
+  "colors": ["Warm White", "Caramel", "Dusty Pink", "Slate", "Terracotta", "Mint", "Lavender", "Deep Brown"],
+  "inStock": true
+}

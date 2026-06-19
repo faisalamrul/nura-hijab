@@ -1,0 +1,12 @@
+{
+  "name": "Hijab Pashmina Rawis",
+  "price": 155000,
+  "variants": 14,
+  "tag": "terlaris",
+  "image": "https://images.unsplash.com/photo-1523203658085-27859efeaa41?w=600&h=800&q=70&auto=format&fit=crop&crop=faces,center",
+  "sku": "NR-PSH-001",
+  "material": "Ceruti Rawis",
+  "description": "Pashmina ceruti rawis premium dengan tepi halus khas rawis yang memberikan kesan feminin dan elegan. Kain tipis namun tidak transparan, drape sempurna dan nyaman untuk berbagai gaya styling dari casual hingga formal.",
+  "colors": ["Soft Beige", "Dusty Mauve", "Sage", "Powder Blue", "Champagne", "Charcoal", "Blush", "Mocha"],
+  "inStock": true
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Hijab Jersey Instant",
+  "price": 175000,
+  "variants": 15,
+  "tag": "terbaru",
+  "image": "https://images.unsplash.com/photo-1558027309-0844844295f7?w=600&h=800&q=70&auto=format&fit=crop&crop=faces,center",
+  "sku": "NR-JRS-001",
+  "material": "Jersey Premium",
+  "description": "Hijab instan jersey premium yang praktis dan nyaman untuk aktivitas sehari-hari. Elastis alami jersey memastikan fit sempurna tanpa perlu peniti. Bahan menyerap keringat, cocok untuk iklim tropis Indonesia.",
+  "colors": ["Black", "White", "Grey Melange", "Navy", "Maroon", "Olive", "Dusty Rose", "Caramel"],
+  "inStock": true
+}

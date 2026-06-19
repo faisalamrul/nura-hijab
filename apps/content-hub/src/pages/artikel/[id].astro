@@ -1,0 +1,346 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import SchemaOrg from "../../components/SchemaOrg.astro";
+import NavHeader from "../../components/NavHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+
+export async function getStaticPaths() {
+  const articles = await getCollection("articles");
+  return articles.map((a) => ({ params: { id: a.id }, props: { article: a } }));
+}
+
+interface Props {
+  article: CollectionEntry<"articles">;
+}
+
+const { article } = Astro.props;
+const { title, excerpt, category, date, readTime, image, paragraphs, sections } = article.data;
+
+const allArticles = await getCollection("articles");
+const related = allArticles
+  .filter((a) => a.id !== article.id && a.data.category === category)
+  .slice(0, 3);
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+const pageUrl = `${siteUrl}/artikel/${article.id}/`;
+
+// Word count — prefer sections, fallback to paragraphs
+const allBodyText = sections
+  ? sections.map((s) => s.body).join(" ")
+  : paragraphs
+    ? paragraphs.join(" ")
+    : excerpt;
+const wordCount = allBodyText.split(/\s+/).length;
+
+// Keywords derived from category + brand
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  "Style Guide": ["styling hijab", "cara pakai hijab", "tutorial hijab", "mix and match hijab"],
+  "Care & Tips": ["cara merawat hijab", "tips hijab", "perawatan hijab premium"],
+  "Beauty Tips": ["tips kecantikan hijab", "warna hijab", "beauty hijab"],
+  "Tren Mode": ["tren hijab", "fashion hijab", "mode hijab terbaru"],
+  "Editorial": ["filosofi hijab", "silent luxury", "brand hijab premium"],
+};
+const pageKeywords = [
+  ...(CATEGORY_KEYWORDS[category] ?? []),
+  "hijab premium",
+  "NURA hijab",
+  "hijab Indonesia",
+];
+
+// Truncated article body for schema (first 500 chars)
+const articleBodySnippet = sections
+  ? sections.slice(0, 2).map((s) => s.body).join(" ").slice(0, 500)
+  : paragraphs
+    ? paragraphs.slice(0, 2).join(" ").slice(0, 500)
+    : excerpt;
+
+const blogPostingSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": pageUrl,
+  },
+  "headline": title,
+  "description": excerpt,
+  "image": {
+    "@type": "ImageObject",
+    "url": image,
+    "width": 1200,
+    "height": 800,
+  },
+  "datePublished": date,
+  "dateModified": date,
+  "author": {
+    "@type": "Person",
+    "name": "Tim Editorial NURA",
+    "url": `${siteUrl}/tentang/`,
+    "worksFor": {
+      "@type": "Organization",
+      "name": "NURA",
+      "url": siteUrl,
+    },
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "NURA",
+    "url": siteUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${siteUrl}/logo.png`,
+      "width": 200,
+      "height": 60,
+    },
+  },
+  "url": pageUrl,
+  "inLanguage": "id-ID",
+  "articleSection": category,
+  "wordCount": wordCount,
+  "timeRequired": `PT${readTime}M`,
+  "keywords": pageKeywords.join(", "),
+  "articleBody": articleBodySnippet,
+  "isPartOf": {
+    "@type": "Blog",
+    "name": "NURA Magazine",
+    "url": `${siteUrl}/artikel/`,
+  },
+};
+
+const formattedDate = new Date(date).toLocaleDateString("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+// SEO description: use excerpt + first sentence hint if short
+const seoDescription = excerpt.length < 100 && paragraphs?.[0]
+  ? `${excerpt} ${paragraphs[0].slice(0, 100)}…`
+  : excerpt;
+---
+
+<Layout
+  title={`${title} — NURA Magazine`}
+  description={seoDescription}
+  canonical={pageUrl}
+  ogImage={image}
+  ogType="article"
+  keywords={pageKeywords}
+  article={{
+    publishedTime: date,
+    modifiedTime: date,
+    section: category,
+    author: "NURA",
+    keywords: pageKeywords,
+  }}
+>
+  <SchemaOrg slot="head" schema={blogPostingSchema} />
+
+  <NavHeader />
+  <Breadcrumb items={[
+    { label: "Beranda", href: "/" },
+    { label: "Magazine", href: "/artikel/" },
+    { label: category },
+    { label: title },
+  ]} />
+
+  <main>
+
+    <!-- Article header -->
+    <header class="max-w-[1440px] mx-auto px-6 md:px-10 py-12 md:py-16">
+      <div class="max-w-2xl">
+        <p class="text-[9px] tracking-[0.4em] uppercase text-muted mb-5">
+          <a href="/artikel/" class="hover:text-ink transition-colors duration-150">{category}</a>
+          &nbsp;&middot;&nbsp;{readTime} menit baca &nbsp;&middot;&nbsp;
+          <time datetime={date}>{formattedDate}</time>
+        </p>
+        <h1 class="font-heading font-light text-ink text-[1.9rem] md:text-[2.8rem] leading-[1.2] mb-6">
+          {title}
+        </h1>
+        <p class="text-[15px] text-muted leading-relaxed border-l-2 border-silver pl-5">
+          {excerpt}
+        </p>
+      </div>
+    </header>
+
+    <!-- Hero image with preload hint via fetchpriority -->
+    <div class="max-w-[1440px] mx-auto px-6 md:px-10 mb-14">
+      <div class="aspect-[16/7] overflow-hidden">
+        <img
+          src={image}
+          alt={title}
+          class="w-full h-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+          width="1200"
+          height="525"
+        />
+      </div>
+    </div>
+
+    <!-- Article body -->
+    <div class="max-w-[1440px] mx-auto px-6 md:px-10 mb-20">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+
+        <!-- Main content -->
+        <article class="md:col-span-8" itemprop="articleBody">
+          {sections && sections.length > 0 ? (
+            <div class="space-y-10">
+              {sections.map((s, i) => (
+                <div>
+                  {s.heading && (
+                    <h2 class="font-heading font-light text-ink text-[1.35rem] leading-snug mb-4 mt-2">
+                      {s.heading}
+                    </h2>
+                  )}
+                  <p class={[
+                    "leading-[1.85] text-[15px]",
+                    i === 0 && !s.heading
+                      ? "text-ink font-light text-[16px] first-letter:text-[3.5rem] first-letter:font-heading first-letter:font-light first-letter:float-left first-letter:mr-2 first-letter:leading-[0.85]"
+                      : "text-muted",
+                  ].join(" ")}>
+                    {s.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : paragraphs && paragraphs.length > 0 ? (
+            <div class="space-y-6">
+              {paragraphs.map((p, i) => (
+                <p class={[
+                  "leading-[1.85] text-[15px]",
+                  i === 0
+                    ? "text-ink font-light text-[16px] first-letter:text-[3.5rem] first-letter:font-heading first-letter:font-light first-letter:float-left first-letter:mr-2 first-letter:leading-[0.85]"
+                    : "text-muted",
+                ].join(" ")}>
+                  {p}
+                </p>
+              ))}
+            </div>
+          ) : (
+            <p class="text-muted leading-relaxed">{excerpt}</p>
+          )}
+
+          <!-- Tags -->
+          <div class="mt-10 flex flex-wrap gap-2">
+            {pageKeywords.slice(0, 5).map((kw) => (
+              <span class="px-3 py-1.5 border border-zinc-100 text-[10px] tracking-[0.1em] text-muted">
+                {kw}
+              </span>
+            ))}
+          </div>
+
+          <!-- Share -->
+          <div class="mt-10 pt-8 border-t border-zinc-100 flex items-center flex-wrap gap-4">
+            <p class="text-[10px] tracking-[0.25em] uppercase text-muted">Bagikan</p>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(title + " — " + pageUrl)}`}
+              class="text-[11px] text-muted hover:text-ink transition-colors duration-150 underline underline-offset-2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              WhatsApp
+            </a>
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(pageUrl)}`}
+              class="text-[11px] text-muted hover:text-ink transition-colors duration-150 underline underline-offset-2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              X/Twitter
+            </a>
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`}
+              class="text-[11px] text-muted hover:text-ink transition-colors duration-150 underline underline-offset-2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Facebook
+            </a>
+          </div>
+        </article>
+
+        <!-- Sidebar -->
+        <aside class="md:col-span-4">
+          <div class="sticky top-28 space-y-10">
+
+            <!-- Article meta card -->
+            <div class="border border-zinc-100 p-6 space-y-4">
+              <p class="text-[9px] tracking-[0.35em] uppercase text-muted">Detail Artikel</p>
+              <dl class="space-y-3 text-[12px]">
+                <div class="flex justify-between">
+                  <dt class="text-muted">Kategori</dt>
+                  <dd class="text-ink font-medium">{category}</dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt class="text-muted">Waktu baca</dt>
+                  <dd class="text-ink font-medium">{readTime} menit</dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt class="text-muted">Diterbitkan</dt>
+                  <dd class="text-ink font-medium">
+                    <time datetime={date}>{formattedDate}</time>
+                  </dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt class="text-muted">Jumlah kata</dt>
+                  <dd class="text-ink font-medium">~{wordCount.toLocaleString("id-ID")}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- CTA to shop -->
+            <div class="bg-jet text-white p-6">
+              <p class="text-[9px] tracking-[0.35em] uppercase text-white/50 mb-3">Dari NURA</p>
+              <p class="font-heading font-light text-white text-lg mb-4 leading-snug">
+                Temukan hijab premium yang cocok untukmu
+              </p>
+              <a
+                href="/produk/"
+                class="inline-flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-white border-b border-white/50 pb-px hover:border-white transition-colors duration-150"
+              >
+                Lihat Koleksi
+                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+    </div>
+
+    <!-- Related articles -->
+    {related.length > 0 && (
+      <section class="max-w-[1440px] mx-auto px-6 md:px-10 pb-20 border-t border-zinc-100 pt-16">
+        <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-3">Baca Juga</p>
+        <h2 class="font-heading font-light text-ink text-xl mb-10">Artikel {category} Lainnya</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-10">
+          {related.map((a) => (
+            <a href={`/artikel/${a.id}`} class="group block">
+              <div class="aspect-[3/2] overflow-hidden mb-4">
+                <img
+                  src={a.data.image}
+                  alt={a.data.title}
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <p class="text-[10px] tracking-[0.25em] uppercase text-muted mb-2">{a.data.category}</p>
+              <h3 class="font-heading font-light text-ink text-[1.05rem] leading-snug group-hover:text-muted transition-colors duration-200">
+                {a.data.title}
+              </h3>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+  </main>
+
+  <SiteFooter />
+</Layout>

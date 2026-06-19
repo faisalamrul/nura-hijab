@@ -1,0 +1,241 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import SchemaOrg from "../components/SchemaOrg.astro";
+import NavHeader from "../components/NavHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { HeroCarousel } from "../components/HeroCarousel";
+import ProductCard from "../components/ProductCard.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+
+const allSlides = await getCollection("slides");
+const slidesData = [...allSlides]
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((s) => s.data);
+
+const allArticles = await getCollection("articles");
+const latestArticles = [...allArticles]
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 4);
+
+const allProducts = await getCollection("products");
+const terbaru = allProducts
+  .filter((p) => p.data.tag === "terbaru" || p.data.tag === "both")
+  .slice(0, 4);
+const terlaris = allProducts
+  .filter((p) => p.data.tag === "terlaris" || p.data.tag === "both")
+  .slice(0, 4);
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+
+// Responsive Unsplash URL helper — generates srcset for hero images
+function unsplashSrcSet(src: string): string {
+  const make = (w: number, h: number, q: number): string => {
+    try {
+      const u = new URL(src);
+      u.searchParams.set("w", String(w));
+      u.searchParams.set("h", String(h));
+      u.searchParams.set("q", String(q));
+      return `${u.toString()} ${w}w`;
+    } catch {
+      return `${src} ${w}w`;
+    }
+  };
+  return [make(640, 411, 55), make(1024, 658, 65), make(1400, 900, 75)].join(", ");
+}
+
+const firstSlideImage = slidesData[0]?.image ?? "";
+const firstSlideSrcset = firstSlideImage ? unsplashSrcSet(firstSlideImage) : undefined;
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "NURA",
+  "url": siteUrl,
+  "logo": {
+    "@type": "ImageObject",
+    "url": `${siteUrl}/logo.png`,
+    "width": 200,
+    "height": 60,
+  },
+  "description": "Brand hijab premium Indonesia dengan filosofi silent luxury — kualitas berbicara lebih keras dari label.",
+  "sameAs": [
+    "https://instagram.com/nura.id",
+    "https://tiktok.com/@nura.id",
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "availableLanguage": "Indonesian",
+  },
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "NURA",
+  "url": siteUrl,
+  "inLanguage": "id-ID",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": `${siteUrl}/search?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+---
+
+<Layout
+  title="NURA — Koleksi Hijab Premium Indonesia"
+  description="Temukan koleksi hijab premium NURA — voal, ceruti, pashmina & segi empat dengan filosofi silent luxury. Gratis ongkir min. Rp150.000."
+  preloadImage={firstSlideImage || undefined}
+  preloadImageSrcset={firstSlideSrcset}
+>
+  <SchemaOrg slot="head" schema={organizationSchema} />
+  <SchemaOrg slot="head" schema={websiteSchema} />
+
+  <NavHeader />
+
+  <!-- ─── Hero Carousel (split layout) ────────────────────────── -->
+  <HeroCarousel slides={slidesData} client:load />
+
+  <!-- ─── Produk Terbaru ───────────────────────────────────────── -->
+  <section id="koleksi" class="max-w-[1440px] mx-auto px-6 md:px-10 py-24">
+
+    <div class="flex items-end justify-between mb-14 pb-8 border-b border-zinc-100">
+      <div>
+        <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-2">Terbaru</p>
+        <h2 class="font-heading font-light text-ink fs-section">
+          Koleksi Terbaru
+        </h2>
+      </div>
+      <a
+        href="#"
+        class="hidden md:inline-flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase text-ink border-b border-ink pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200"
+      >
+        Lihat Semua
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-x-5 md:gap-x-8 gap-y-10 md:gap-y-14">
+      {terbaru.map((p) => (
+        <ProductCard
+          name={p.data.name}
+          price={p.data.price}
+          variants={p.data.variants}
+          image={p.data.image}
+          badge={p.data.badge}
+          href={`/produk/${p.id}`}
+        />
+      ))}
+    </div>
+
+    <div class="md:hidden text-center mt-14">
+      <a href="#" class="inline-flex items-center gap-3 text-[11px] tracking-[0.22em] uppercase border-b border-ink pb-0.5">
+        Lihat Semua Koleksi
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── Produk Terlaris ──────────────────────────────────────── -->
+  <section id="terlaris" class="bg-surface">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-10 py-24">
+
+      <div class="flex items-end justify-between mb-14 pb-8 border-b border-zinc-200">
+        <div>
+          <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-2">Favorit Pelanggan</p>
+          <h2 class="font-heading font-light text-ink fs-section">
+            Produk Terlaris
+          </h2>
+        </div>
+        <a
+          href="#"
+          class="hidden md:inline-flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase text-ink border-b border-ink pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200"
+        >
+          Lihat Semua
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-x-5 md:gap-x-8 gap-y-10 md:gap-y-14">
+        {terlaris.map((p) => (
+          <ProductCard
+            name={p.data.name}
+            price={p.data.price}
+            variants={p.data.variants}
+            image={p.data.image}
+            badge={p.data.badge}
+            href={`/produk/${p.id}`}
+          />
+        ))}
+      </div>
+
+      <div class="md:hidden text-center mt-14">
+        <a href="#" class="inline-flex items-center gap-3 text-[11px] tracking-[0.22em] uppercase border-b border-ink pb-0.5">
+          Lihat Semua Produk
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Latest Articles ────────────────────────────────────────── -->
+  <section class="max-w-[1440px] mx-auto px-6 md:px-10 py-24">
+
+    <div class="flex items-end justify-between mb-14 pb-8 border-b border-zinc-100">
+      <div>
+        <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-2">Dari Blog</p>
+        <h2 class="font-heading font-light text-ink fs-section">
+          Artikel Terbaru
+        </h2>
+      </div>
+      <a
+        href="#"
+        class="hidden md:inline-flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase text-ink border-b border-ink pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200"
+      >
+        Lihat Semua
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
+      {latestArticles.map((a) => (
+        <ArticleCard
+          title={a.data.title}
+          excerpt={a.data.excerpt}
+          category={a.data.category}
+          date={a.data.date}
+          readTime={a.data.readTime}
+          image={a.data.image}
+          href={`/artikel/${a.id}`}
+        />
+      ))}
+    </div>
+
+  </section>
+
+  <!-- ─── Manifesto ────────────────────────────────────────────── -->
+  <section id="tentang" class="py-32 px-6 md:px-10">
+    <div class="max-w-2xl mx-auto text-center">
+      <p class="text-[10px] tracking-[0.4em] uppercase text-muted mb-10">Tentang NURA</p>
+      <blockquote class="font-heading font-light text-ink leading-[1.45] fs-manifesto">
+        "Kami percaya bahwa menutup aurat bukan berarti menyembunyikan diri — melainkan memilih bagaimana kamu ingin dilihat dunia."
+      </blockquote>
+      <div class="mt-12 w-10 h-px bg-silver mx-auto"></div>
+      <p class="mt-8 text-sm text-muted leading-relaxed max-w-md mx-auto">
+        NURA adalah label hijab premium Indonesia yang memadukan estetika editorial dengan kenyamanan sehari-hari.
+      </p>
+    </div>
+  </section>
+
+  <SiteFooter />
+
+</Layout>

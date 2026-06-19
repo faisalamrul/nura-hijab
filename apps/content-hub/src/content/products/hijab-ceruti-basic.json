@@ -1,0 +1,12 @@
+{
+  "name": "Hijab Ceruti Basic",
+  "price": 145000,
+  "variants": 8,
+  "tag": "terbaru",
+  "image": "https://images.unsplash.com/photo-1640154852340-9de73a0643a8?w=600&h=800&q=70&auto=format&fit=crop&crop=faces,center",
+  "sku": "NR-CRT-001",
+  "material": "Ceruti Babydoll",
+  "description": "Hijab ceruti babydoll dengan tekstur halus dan jatuh elegan yang sempurna untuk tampilan formal dan profesional. Kain ceruti premium yang breathable dengan drape alami dan warna yang tahan lama.",
+  "colors": ["Ivory", "Black", "Navy", "Burgundy", "Mist Grey", "Nude", "Forest Green", "Cobalt"],
+  "inStock": true
+}

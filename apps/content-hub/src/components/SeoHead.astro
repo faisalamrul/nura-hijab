@@ -1,0 +1,81 @@
+---
+const DEFAULT_OG_IMAGE =
+  "https://images.unsplash.com/photo-1585728748176-455ac5eed962?w=1200&h=630&q=75&auto=format&fit=crop&crop=faces,center";
+
+const DEFAULT_DESCRIPTION =
+  "Koleksi hijab premium NURA — silent luxury untuk wanita Muslim modern Indonesia. Voal, ceruti, pashmina, dan segi empat dengan warna earth tone timeless.";
+
+interface ArticleMeta {
+  publishedTime: string;
+  modifiedTime?: string | undefined;
+  section?: string | undefined;
+  author?: string | undefined;
+  keywords?: string[] | undefined;
+}
+
+interface Props {
+  title: string;
+  description?: string | undefined;
+  canonical?: string | undefined;
+  ogImage?: string | undefined;
+  ogType?: "website" | "article" | undefined;
+  article?: ArticleMeta | undefined;
+  keywords?: string[] | undefined;
+  noindex?: boolean | undefined;
+}
+
+const {
+  title,
+  description = DEFAULT_DESCRIPTION,
+  canonical = Astro.url.href,
+  ogImage = DEFAULT_OG_IMAGE,
+  ogType = "website",
+  article,
+  keywords,
+  noindex = false,
+} = Astro.props;
+---
+
+<!-- Primary -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{keywords && keywords.length > 0 && (
+  <meta name="keywords" content={keywords.join(", ")} />
+)}
+{noindex && <meta name="robots" content="noindex,follow" />}
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="id_ID" />
+<meta property="og:site_name" content="NURA" />
+
+<!-- Article-specific OG (only when ogType="article") -->
+{article && (
+  <>
+    <meta property="article:published_time" content={article.publishedTime} />
+    {article.modifiedTime && (
+      <meta property="article:modified_time" content={article.modifiedTime} />
+    )}
+    {article.section && (
+      <meta property="article:section" content={article.section} />
+    )}
+    <meta property="article:author" content={article.author ?? "NURA"} />
+    {article.keywords?.map((kw) => (
+      <meta property="article:tag" content={kw} />
+    ))}
+  </>
+)}
+
+<!-- Twitter / X Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@nura_id" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />

@@ -1,0 +1,13 @@
+{
+  "name": "Hijab Voal Emboss",
+  "price": 195000,
+  "variants": 10,
+  "tag": "terlaris",
+  "badge": "Bestseller",
+  "image": "https://images.unsplash.com/photo-1643458180338-02c4fa4be53c?w=600&h=800&q=70&auto=format&fit=crop&crop=faces,center",
+  "sku": "NR-VLE-001",
+  "material": "Voal Emboss",
+  "description": "Hijab voal emboss premium dengan motif tekstur timbul yang memberikan dimensi visual elegan tanpa terkesan berlebihan. Kain voal ringan yang breathable dengan detail emboss yang subtle — sempurna untuk filosofi silent luxury NURA.",
+  "colors": ["Warm Cream", "Sand Dune", "Dusty Rose", "Sage Green", "Slate Blue", "Mocha", "Mist Grey", "Ivory"],
+  "inStock": true
+}

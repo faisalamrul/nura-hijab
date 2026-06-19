@@ -1,0 +1,147 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SchemaOrg from "../components/SchemaOrg.astro";
+import NavHeader from "../components/NavHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+
+const siteUrl = (Astro.site ?? new URL("http://localhost:4321")).toString().replace(/\/$/, "");
+const pageUrl = `${siteUrl}/faq/`;
+
+const faqs = [
+  {
+    q: "Apa perbedaan antara hijab voal, ceruti, dan sifon?",
+    a: "Voal adalah kain ringan dengan tekstur halus dan permukaan matte — ideal untuk pemakaian sehari-hari karena breathable dan tidak mudah kusut. Ceruti memiliki tekstur micro-crinkle yang memberi dimensi visual subtle dengan drape yang lebih tegas dan elegan, cocok untuk tampilan formal. Sifon adalah kain yang sangat ringan dengan kilau lembut — pilihan premium untuk acara spesial seperti pernikahan dan acara formal karena tampilannya yang mewah.",
+  },
+  {
+    q: "Bagaimana cara memilih warna hijab yang sesuai dengan warna kulit?",
+    a: "Untuk kulit sawo matang (undertone hangat), warna earth tone seperti caramel, terracotta, sage green, dan warm cream sangat cocok karena bisa menonjolkan warna kulit alami. Untuk kulit cerah (undertone cool), warna dusty rose, slate blue, powder blue, dan lavender memberikan kontras yang indah. Warna netral seperti ivory, off white, dan charcoal bersifat universal dan cocok untuk semua warna kulit. Koleksi NURA dikurasi untuk mencakup spektrum ini.",
+  },
+  {
+    q: "Apakah warna produk yang diterima sama persis dengan foto di website?",
+    a: "Kami berusaha semaksimal mungkin agar representasi warna di foto sesuai dengan produk aslinya. Namun perlu diketahui bahwa setiap layar perangkat memiliki kalibrasi warna yang berbeda, sehingga mungkin ada sedikit perbedaan dalam persepsi warna. Produk difoto dalam kondisi pencahayaan natural untuk memberikan gambaran warna yang paling akurat. Jika kamu ragu, kamu bisa menghubungi tim customer service kami untuk mendapatkan referensi warna yang lebih detail.",
+  },
+  {
+    q: "Bagaimana cara merawat hijab NURA agar tetap awet dan warnanya tidak pudar?",
+    a: "Cuci dengan tangan menggunakan deterjen lembut yang diformulasikan untuk pakaian halus, atau gunakan program delicate di mesin cuci dengan suhu air maksimal 30°C. Hindari memeras terlalu keras — cukup tekan lembut untuk mengurangi air berlebih. Jemur dalam posisi terbuka atau digantung dengan hanger, hindari paparan matahari langsung yang bisa memudarkan warna. Simpan dalam kondisi terlipat rapi di tempat yang sejuk dan kering.",
+  },
+  {
+    q: "Apakah hijab NURA bisa disetrika? Suhu berapa yang disarankan?",
+    a: "Ya, hijab NURA bisa disetrika. Untuk voal dan ceruti, gunakan suhu rendah (mode sutra/silk, sekitar 110°C) tanpa uap, atau gunakan kain tipis sebagai pelapis antara setrika dan hijab. Untuk sifon, lebih disarankan menggunakan steamer untuk menghilangkan kerutan karena risiko kerusakan akibat panas lebih tinggi. Jersey tidak memerlukan penyetrikaan — cukup tarik perlahan saat masih lembab untuk menghilangkan kerutan.",
+  },
+  {
+    q: "Berapa lama proses pengiriman ke seluruh Indonesia?",
+    a: "Pengiriman reguler ke Jabodetabek memakan waktu 1-2 hari kerja. Untuk Jawa dan Bali, estimasi 2-3 hari kerja. Untuk Sumatera, Kalimantan, dan Sulawesi, 3-5 hari kerja. Papua dan Maluku bisa memakan waktu 5-7 hari kerja. Tersedia pilihan pengiriman ekspres (JNE YES, J&T Express) untuk kebutuhan mendesak dengan estimasi pengiriman lebih cepat. Semua pesanan dikemas dengan teliti sebelum dikirim.",
+  },
+  {
+    q: "Bagaimana kebijakan pengembalian dan penukaran produk NURA?",
+    a: "NURA menerima pengembalian produk dalam 7 hari setelah produk diterima, dengan syarat produk masih dalam kondisi asli (belum dipakai, tag masih terpasang, kemasan utuh). Pengembalian dapat dilakukan karena produk cacat, warna tidak sesuai deskripsi, atau salah kirim. Untuk penukaran ukuran atau warna, tersedia selama stok pengganti tersedia. Biaya pengiriman pengembalian ditanggung NURA jika produk cacat atau salah kirim.",
+  },
+  {
+    q: "Apakah ada garansi kualitas untuk setiap produk NURA?",
+    a: "Setiap produk NURA telah melalui quality control ketat sebelum dikemas dan dikirim. Kami menjamin bahwa setiap produk bebas dari cacat jahitan, warna tidak merata, dan dimensi yang tidak sesuai. Jika kamu menerima produk dengan cacat produksi, kami akan mengganti produk tanpa biaya tambahan. Foto cacat produk dan laporkan ke customer service kami dalam 48 jam setelah produk diterima.",
+  },
+  {
+    q: "Apa yang dimaksud dengan filosofi 'silent luxury' NURA?",
+    a: "Silent luxury adalah pendekatan desain yang mengutamakan kualitas material, detail yang halus, dan estetika yang tenang — bukan logo besar atau hiasan berlebihan. Produk NURA dirancang untuk berbicara melalui kualitasnya sendiri: kain yang jatuh sempurna, warna yang dikurasi dengan cermat, dan finishing yang rapi. Ini adalah kebalikan dari 'loud luxury' yang menggunakan branding mencolok. Di NURA, kami percaya bahwa kemewahan sejati tidak perlu berteriak.",
+  },
+  {
+    q: "Apakah NURA melayani pemesanan dalam jumlah besar (reseller/grosir)?",
+    a: "Ya, NURA menerima pemesanan grosir dengan minimum order 12 pcs per model/warna. Harga grosir tersedia mulai pembelian 50 pcs ke atas. Untuk menjadi reseller NURA, hubungi tim B2B kami melalui WhatsApp atau email dengan mencantumkan nama usaha, lokasi, dan perkiraan volume order per bulan. Tim kami akan menghubungi dalam 1-2 hari kerja dengan penawaran harga terbaik.",
+  },
+  {
+    q: "Bagaimana cara menghilangkan noda pada hijab tanpa merusak kain?",
+    a: "Untuk noda segar, blot (jangan digosok) dengan kain putih bersih yang dibasahi air dingin sesegera mungkin. Untuk noda minyak (makeup, skincare), taburkan bedak bayi atau tepung maizena di atas noda, diamkan 10-15 menit, lalu sikat perlahan dengan sikat halus sebelum dicuci biasa. Untuk noda lipstik, gunakan makeup remover berbasis micellar water. Hindari penggunaan pemutih karena bisa merusak serat kain dan memudarkan warna.",
+  },
+  {
+    q: "Di mana saya bisa mencoba atau melihat produk NURA secara langsung?",
+    a: "Saat ini NURA beroperasi sebagai brand digital-first dan belum memiliki toko fisik permanen. Namun kami secara rutin berpartisipasi dalam pop-up market dan bazaar fashion Muslim di Jakarta dan kota-kota besar lainnya. Pantau akun Instagram @nura.id untuk informasi pop-up event terbaru. Untuk pembelian online, semua produk tersedia di website resmi nura.id dengan foto dan deskripsi detail yang akurat.",
+  },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "name": "FAQ NURA — Pertanyaan Seputar Hijab Premium",
+  "url": pageUrl,
+  "dateModified": "2026-06-19",
+  "inLanguage": "id-ID",
+  "mainEntity": faqs.map(({ q, a }) => ({
+    "@type": "Question",
+    "name": q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": a,
+    },
+  })),
+};
+---
+
+<Layout
+  title="FAQ — Pertanyaan Seputar Hijab NURA"
+  description="Jawaban lengkap atas pertanyaan umum seputar hijab NURA: pilihan material, perawatan, pengiriman, pengembalian, dan filosofi silent luxury brand kami."
+  canonical={pageUrl}
+>
+  <SchemaOrg slot="head" schema={faqSchema} />
+
+  <NavHeader />
+  <Breadcrumb items={[
+    { label: "Beranda", href: "/" },
+    { label: "FAQ" },
+  ]} />
+
+  <main class="max-w-[1440px] mx-auto px-6 md:px-10 py-16 md:py-20">
+
+    <div class="max-w-3xl">
+      <p class="text-[10px] tracking-[0.35em] uppercase text-muted mb-3">Bantuan</p>
+      <h1 class="font-heading font-light text-ink text-[2.2rem] md:text-[3rem] leading-tight mb-4">
+        Pertanyaan yang Sering Diajukan
+      </h1>
+      <p class="text-sm text-muted leading-relaxed mb-16 max-w-xl">
+        Tidak menemukan jawaban yang kamu cari? Hubungi kami melalui Instagram @nura.id atau WhatsApp.
+      </p>
+
+      <!-- FAQ accordion -->
+      <div class="divide-y divide-zinc-100">
+        {faqs.map(({ q, a }) => (
+          <details class="group py-1">
+            <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer list-none select-none">
+              <h2 class="text-[0.95rem] font-medium text-ink leading-snug pr-4">
+                {q}
+              </h2>
+              <!-- Chevron icon rotates when open -->
+              <span class="shrink-0 w-6 h-6 flex items-center justify-center text-muted transition-transform duration-200 group-open:rotate-45">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </span>
+            </summary>
+            <div class="pb-6 pr-10">
+              <p class="text-sm text-muted leading-relaxed">{a}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+
+      <!-- Contact CTA -->
+      <div class="mt-16 pt-10 border-t border-zinc-100">
+        <p class="text-[10px] tracking-[0.3em] uppercase text-muted mb-3">Masih ada pertanyaan?</p>
+        <p class="text-sm text-muted leading-relaxed mb-6 max-w-md">
+          Tim customer service NURA siap membantu kamu Senin–Sabtu, pukul 09.00–17.00 WIB.
+        </p>
+        <a
+          href="https://instagram.com/nura.id"
+          class="inline-flex items-center gap-3 text-[11px] tracking-[0.2em] uppercase text-ink border-b border-ink pb-0.5 hover:text-muted hover:border-muted transition-colors duration-200"
+        >
+          Hubungi Kami
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <SiteFooter />
+</Layout>
