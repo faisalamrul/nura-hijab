@@ -211,7 +211,7 @@ export default function CartPage() {
               Memuat...
             </div>
           ) : items.length === 0 ? (
-            <CartEmpty />
+            <CartEmpty onNavigate={goBackToAstro} />
           ) : (
             <div className="cart-grid" style={{
               display: "grid",

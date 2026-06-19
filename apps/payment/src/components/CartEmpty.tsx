@@ -1,7 +1,6 @@
 import { FONT_HEADING, COLOR } from "@/lib/tokens";
-import { ASTRO_URL } from "@/lib/config";
 
-export function CartEmpty() {
+export function CartEmpty({ onNavigate }: { onNavigate: () => void }) {
   return (
     <div style={{
       display: "flex",
@@ -42,8 +41,8 @@ export function CartEmpty() {
       }}>
         Belum ada produk yang ditambahkan. Jelajahi koleksi hijab premium NURA.
       </p>
-      <a
-        href={`${ASTRO_URL}/produk/`}
+      <button
+        onClick={onNavigate}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -55,14 +54,15 @@ export function CartEmpty() {
           letterSpacing: "0.25em",
           textTransform: "uppercase",
           fontWeight: 500,
-          textDecoration: "none",
+          border: "none",
+          cursor: "pointer",
         }}
       >
         Mulai Belanja
         <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 12h14M12 5l7 7-7 7"/>
         </svg>
-      </a>
+      </button>
     </div>
   );
 }
